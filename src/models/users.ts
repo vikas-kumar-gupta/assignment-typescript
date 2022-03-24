@@ -1,4 +1,4 @@
-import mongoose, {Schema, model} from 'mongoose';
+import mongoose, { Schema, model } from 'mongoose';
 
 interface User {
     username: String,
@@ -7,7 +7,7 @@ interface User {
     status: Boolean
 }
 
-const UserSchema = new Schema<User>({
+const userSchema = new Schema<User>({
     username: {
         type: String,
         required: true
@@ -26,6 +26,6 @@ const UserSchema = new Schema<User>({
     }
 })
 
-const User = model<User>('User', UserSchema);
+const User = model<User>('User', userSchema);
 
 export default User;

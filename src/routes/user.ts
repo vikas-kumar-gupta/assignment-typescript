@@ -1,9 +1,12 @@
 import express, {Request, Response} from 'express';
+
+import {isLoggedIn} from '../middlewares/user'
 import {signUp, logIn, deleteUser, userDetail, getAllUsers, updateUser } from '../controllers/user'
+
 
 const router = express.Router();
 
-router.post('/login', logIn)
+router.post('/login', isLoggedIn, logIn)
 router.post('/signup', signUp)
 router.get('/user/all', getAllUsers)
 router.post('/reactivate', ()=>{})

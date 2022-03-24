@@ -1,11 +1,20 @@
-import express, { Request, Response } from 'express';
+import express, { Application, Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
+import md5 from 'md5';
+
+const app: Application = express();
+
 import User from '../models/users'
 
 const signUp = async (req: Request, res: Response) => {
     try {
-        const data: JSON = req.body;
-        const user = new User(data);
-        await user.save(err => {
+        const { username, password, email, status }: any = req.body;
+        const hashPassword = md5(password);
+        const query = { username: username, password: hashPassword, email: email, status: status }
+        const user = new User(query);
+        const token: any = jwt.sign({ _id: user._id }, "satyamev-jayte")
+        res.cookie('jwt', token, { expires: new Date(Date.now() + 600000) })
+        user.save(err => {
             if (err) {
                 res.status(400).json({ error: true, message: err.message });
             }
@@ -22,13 +31,28 @@ const signUp = async (req: Request, res: Response) => {
 const logIn = async (req: Request, res: Response) => {
     try {
         const { username, password } = req.body;
-        const user = await User.find({ username: username, password: password })
-        if (user.length != 0) {
-            res.status(200).json(user)
+        const hashPassword = md5(password)
+        const user: any = await User.findOne({ username: username, password: hashPassword })
+        const token = req.cookies.jwt;
+        if (token == undefined && user) {
+            const newToken = jwt.sign({ _id: user._id }, "satyamev-jayte")
+            res.cookie('jwt', newToken, { expires: new Date(Date.now() + 600000) })
+            if (user) {
+                res.status(200).json({message: "login successful", user: user})
+            }
+            else {
+                res.status(400).json({ message: "incorrect username or password" })
+            }
         }
         else {
-            res.status(404).json({ message: "incorrect username or password" })
+            if(user) {
+                res.status(200).json({message:"already logged in"});
+            }
+            else {
+                res.status(400).json({ message: "incorrect username or password" })
+            }
         }
+        
     }
     catch (err) {
         res.status(400).json({ error: true, message: err });
@@ -37,7 +61,7 @@ const logIn = async (req: Request, res: Response) => {
 
 const userDetail = async (req: Request, res: Response) => {
     try {
-        const username = req.body.username
+        const username = req.params.username;
         const user = await User.findOne({ username: username })
         if (user) {
             res.status(200).json(user)

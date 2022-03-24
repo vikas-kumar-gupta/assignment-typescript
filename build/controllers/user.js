@@ -13,12 +13,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateUser = exports.userDetail = exports.getAllUsers = exports.deleteUser = exports.logIn = exports.signUp = void 0;
+const express_1 = __importDefault(require("express"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const md5_1 = __importDefault(require("md5"));
+const app = (0, express_1.default)();
 const users_1 = __importDefault(require("../models/users"));
 const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const data = req.body;
-        const user = new users_1.default(data);
-        yield user.save(err => {
+        const { username, password, email, status } = req.body;
+        const hashPassword = (0, md5_1.default)(password);
+        const query = { username: username, password: hashPassword, email: email, status: status };
+        const user = new users_1.default(query);
+        const token = jsonwebtoken_1.default.sign({ _id: user._id }, "satyamev-jayte");
+        res.cookie('jwt', token, { expires: new Date(Date.now() + 600000) });
+        user.save(err => {
             if (err) {
                 res.status(400).json({ error: true, message: err.message });
             }
@@ -35,12 +43,26 @@ exports.signUp = signUp;
 const logIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { username, password } = req.body;
-        const user = yield users_1.default.find({ username: username, password: password });
-        if (user.length != 0) {
-            res.status(200).json(user);
+        const hashPassword = (0, md5_1.default)(password);
+        const user = yield users_1.default.findOne({ username: username, password: hashPassword });
+        const token = req.cookies.jwt;
+        if (token == undefined && user) {
+            const newToken = jsonwebtoken_1.default.sign({ _id: user._id }, "satyamev-jayte");
+            res.cookie('jwt', newToken, { expires: new Date(Date.now() + 600000) });
+            if (user) {
+                res.status(200).json({ message: "login successful", user: user });
+            }
+            else {
+                res.status(400).json({ message: "incorrect username or password" });
+            }
         }
         else {
-            res.status(404).json({ message: "incorrect username or password" });
+            if (user) {
+                res.status(200).json({ message: "already logged in" });
+            }
+            else {
+                res.status(400).json({ message: "incorrect username or password" });
+            }
         }
     }
     catch (err) {
@@ -50,7 +72,7 @@ const logIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.logIn = logIn;
 const userDetail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const username = req.body.username;
+        const username = req.params.username;
         const user = yield users_1.default.findOne({ username: username });
         if (user) {
             res.status(200).json(user);
@@ -105,6 +127,7 @@ const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         });
     }
     catch (err) {
+        res.status(400).json({ error: true, message: err });
     }
 });
 exports.updateUser = updateUser;
