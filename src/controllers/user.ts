@@ -92,7 +92,12 @@ const deleteUser = async (req: Request, res: Response) => {
                 res.status(400).json({ error: true, message: err })
             }
             else {
-                res.status(200).json({ message: "user deleted successfully", user: data })
+                if(data) {
+                    res.status(200).json({ message: "user deleted successfully", user: data })
+                }
+                else {
+                    res.status(404).json({ message: "user does not exist" })
+                }
             }
         })
     }
@@ -105,7 +110,8 @@ const updateUser = async (req: Request, res: Response) => {
     try {
         const username: String = req.params.username;
         const { password, email, status } = req.body;
-        User.findOneAndUpdate({ username: username }, { password: password, email: email, status: status }, null, (err, data) => {
+        const hashPassword = md5(password)
+        User.findOneAndUpdate({ username: username }, { password: hashPassword, email: email, status: status }, null, (err, data) => {
             if (err) {
                 res.status(400).json({ error: true, message: err })
             }

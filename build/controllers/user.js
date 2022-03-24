@@ -104,7 +104,12 @@ const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 res.status(400).json({ error: true, message: err });
             }
             else {
-                res.status(200).json({ message: "user deleted successfully", user: data });
+                if (data) {
+                    res.status(200).json({ message: "user deleted successfully", user: data });
+                }
+                else {
+                    res.status(404).json({ message: "user does not exist" });
+                }
             }
         });
     }
@@ -117,7 +122,8 @@ const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     try {
         const username = req.params.username;
         const { password, email, status } = req.body;
-        users_1.default.findOneAndUpdate({ username: username }, { password: password, email: email, status: status }, null, (err, data) => {
+        const hashPassword = (0, md5_1.default)(password);
+        users_1.default.findOneAndUpdate({ username: username }, { password: hashPassword, email: email, status: status }, null, (err, data) => {
             if (err) {
                 res.status(400).json({ error: true, message: err });
             }

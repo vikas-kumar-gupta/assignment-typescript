@@ -15,8 +15,19 @@ const isLoggedIn = async (req: Request, res: Response, next: NextFunction) => {
     catch (err) {
         console.log(err);
         
-        res.status(400).json({ error: true, message: "err" });
+        res.status(404).json({ error: true, message: "err" });
     }
 }
 
-export { isLoggedIn }
+const isAuthored = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const token = req.cookies.jwt;
+        const verifyToken = jwt.verify(token, "satyamev-jayte")
+        next()
+    }
+    catch (err) {
+        res.status(404).json({ error: true, message: err })
+    }
+}
+
+export { isLoggedIn, isAuthored }
