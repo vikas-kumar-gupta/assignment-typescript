@@ -15,8 +15,16 @@ const userSchema = new mongoose_1.Schema({
         required: true
     },
     status: {
-        type: Boolean,
+        type: String,
+        enum: ['active', 'deactivated', 'incomplete'],
+        default: 'active',
+    },
+    createdAt: {
+        type: Number,
         required: true
+    },
+    updatedAt: {
+        type: Date
     }
 });
 const User = (0, mongoose_1.model)('User', userSchema);

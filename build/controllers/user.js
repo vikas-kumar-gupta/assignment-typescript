@@ -23,9 +23,10 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { username, password, email, status } = req.body;
         const hashPassword = (0, md5_1.default)(password);
-        const emailExists = yield users_1.default.findOne({ email: email });
-        if (!emailExists) {
-            const query = { username: username, password: hashPassword, email: email, status: status };
+        const userExists = yield users_1.default.findOne({ $or: [{ email: email }, { username: username }] });
+        if (!userExists) {
+            const createdAt = new Date().getTime();
+            const query = { username: username, password: hashPassword, email: email, status: status, createdAt: createdAt };
             const user = new users_1.default(query);
             const token = jsonwebtoken_1.default.sign({ _id: user._id }, "satyamev-jayte");
             res.cookie('jwt', token, { expires: new Date(Date.now() + 600000) });
@@ -34,12 +35,12 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                     res.status(404).json({ error: true, message: err.message });
                 }
                 else {
-                    res.status(200).json({ message: "data updated successfully" });
+                    res.status(201).json({ message: "data updated successfully" });
                 }
             });
         }
         else {
-            res.status(404).json({ message: "email is already registered" });
+            res.status(404).json({ message: "email or username is already registered" });
         }
     }
     catch (err) {
@@ -60,7 +61,7 @@ const logIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 res.status(200).json({ message: "login successful", user: user });
             }
             else {
-                res.status(404).json({ message: "incorrect username or password" });
+                res.status(401).json({ message: "incorrect username or password" });
             }
         }
         else {
@@ -68,7 +69,7 @@ const logIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 res.status(200).json({ message: "already logged in" });
             }
             else {
-                res.status(404).json({ message: "incorrect username or password" });
+                res.status(401).json({ message: "incorrect username or password" });
             }
         }
     }
@@ -85,7 +86,7 @@ const userDetail = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             res.status(200).json(user);
         }
         else {
-            res.status(404).json({ message: "could not find user" });
+            res.status(401).json({ message: "could not find user" });
         }
     }
     catch (err) {
@@ -115,7 +116,7 @@ const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                     res.status(200).json({ message: "user deleted successfully", user: data });
                 }
                 else {
-                    res.status(404).json({ message: "user does not exist" });
+                    res.status(401).json({ message: "user does not exist" });
                 }
             }
         });
@@ -130,12 +131,13 @@ const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const username = req.params.username;
         const { password, email, status } = req.body;
         const hashPassword = (0, md5_1.default)(password);
-        users_1.default.findOneAndUpdate({ username: username }, { password: hashPassword, email: email, status: status }, null, (err, data) => {
+        const updatedAt = new Date().getTime();
+        users_1.default.findOneAndUpdate({ username: username }, { password: hashPassword, email: email, status: status, updatedAt: updatedAt }, null, (err, data) => {
             if (err) {
-                res.status(404).json({ error: true, message: err });
+                res.status(401).json({ error: true, message: err });
             }
             else {
-                res.status(200).json({ message: "user updated successfully.", user: data });
+                res.status(201).json({ message: "user updated successfully.", user: data });
             }
         });
     }
@@ -161,7 +163,7 @@ const sendMsg = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             });
         }
         else {
-            res.status(404).json({ message: 'toekn is not verified' });
+            res.status(401).json({ message: 'toekn is not verified' });
         }
     }
     catch (err) {

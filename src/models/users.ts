@@ -4,7 +4,9 @@ interface User {
     username: String,
     password: String,
     email: String,
-    status: Boolean
+    status: String,
+    createdAt: Number,
+    updatedAt: Date,
 }
 
 const userSchema = new Schema<User>({
@@ -21,8 +23,16 @@ const userSchema = new Schema<User>({
         required: true
     },
     status: {
-        type: Boolean,
+        type: String,
+        enum: ['active', 'deactivated', 'incomplete'],
+        default: 'active',
+    },
+    createdAt: {
+        type: Number,
         required: true
+    },
+    updatedAt: {
+        type: Date
     }
 })
 

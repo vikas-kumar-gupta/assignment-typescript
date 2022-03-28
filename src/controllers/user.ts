@@ -11,9 +11,10 @@ const signUp = async (req: Request, res: Response) => {
     try {
         const { username, password, email, status }: any = req.body;
         const hashPassword = md5(password);
-        const emailExists = await User.findOne({email: email});
-        if(!emailExists) {
-            const query = { username: username, password: hashPassword, email: email, status: status }
+        const userExists = await User.findOne({ $or: [{ email: email }, { username: username }] });
+        if (!userExists) {
+            const createdAt: Number = new Date().getTime()
+            const query = { username: username, password: hashPassword, email: email, status: status, createdAt: createdAt }
             const user = new User(query);
             const token: any = jwt.sign({ _id: user._id }, "satyamev-jayte")
             res.cookie('jwt', token, { expires: new Date(Date.now() + 600000) })
@@ -27,9 +28,9 @@ const signUp = async (req: Request, res: Response) => {
             })
         }
         else {
-            res.status(404).json({message: "email is already registered"});
+            res.status(404).json({ message: "email or username is already registered" });
         }
-        
+
     }
     catch (err) {
         res.status(404).json({ error: true, message: err });
@@ -119,7 +120,8 @@ const updateUser = async (req: Request, res: Response) => {
         const username: String = req.params.username;
         const { password, email, status } = req.body;
         const hashPassword = md5(password)
-        User.findOneAndUpdate({ username: username }, { password: hashPassword, email: email, status: status }, null, (err, data) => {
+        const updatedAt: Number = new Date().getTime();
+        User.findOneAndUpdate({ username: username }, { password: hashPassword, email: email, status: status, updatedAt: updatedAt }, null, (err, data) => {
             if (err) {
                 res.status(401).json({ error: true, message: err })
             }
