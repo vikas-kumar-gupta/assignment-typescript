@@ -3,7 +3,7 @@ const client = mqtt.connect("mqtt://localhost:3050");
 
 const topic_Appinventiv = "Appinventiv"
 
-let msg_Appinventiv = `Hello Appinventiv`;
+let msg_Appinventiv = 'Hello Appinventiv';
 
 client.on('connect', () => {
     setInterval(() => {
