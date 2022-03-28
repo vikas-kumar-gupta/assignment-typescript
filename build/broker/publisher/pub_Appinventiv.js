@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mqtt_1 = __importDefault(require("mqtt"));
 const client = mqtt_1.default.connect("mqtt://localhost:3050");
 const topic_Appinventiv = "Appinventiv";
-let msg_Appinventiv = `Hello Appinventiv`;
+let msg_Appinventiv = 'Hello Appinventiv';
 client.on('connect', () => {
     setInterval(() => {
         client.publish(topic_Appinventiv, msg_Appinventiv);

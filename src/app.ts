@@ -6,7 +6,7 @@ import userRoute from './routes/user'
 import normalRoute from './routes/normal'
 
 const app: Application = express();
-const port: Number = 4000;
+const port: Number= 4000
 
 app.use(express.json())
 app.use(cookieParser())

@@ -11,18 +11,25 @@ const signUp = async (req: Request, res: Response) => {
     try {
         const { username, password, email, status }: any = req.body;
         const hashPassword = md5(password);
-        const query = { username: username, password: hashPassword, email: email, status: status }
-        const user = new User(query);
-        const token: any = jwt.sign({ _id: user._id }, "satyamev-jayte")
-        res.cookie('jwt', token, { expires: new Date(Date.now() + 600000) })
-        user.save(err => {
-            if (err) {
-                res.status(404).json({ error: true, message: err.message });
-            }
-            else {
-                res.status(200).json({ message: "data updated successfully" })
-            }
-        })
+        const emailExists = await User.findOne({email: email});
+        if(!emailExists) {
+            const query = { username: username, password: hashPassword, email: email, status: status }
+            const user = new User(query);
+            const token: any = jwt.sign({ _id: user._id }, "satyamev-jayte")
+            res.cookie('jwt', token, { expires: new Date(Date.now() + 600000) })
+            user.save(err => {
+                if (err) {
+                    res.status(404).json({ error: true, message: err.message });
+                }
+                else {
+                    res.status(201).json({ message: "data updated successfully" })
+                }
+            })
+        }
+        else {
+            res.status(404).json({message: "email is already registered"});
+        }
+        
     }
     catch (err) {
         res.status(404).json({ error: true, message: err });
@@ -42,7 +49,7 @@ const logIn = async (req: Request, res: Response) => {
                 res.status(200).json({ message: "login successful", user: user })
             }
             else {
-                res.status(404).json({ message: "incorrect username or password" })
+                res.status(401).json({ message: "incorrect username or password" })
             }
         }
         else {
@@ -50,7 +57,7 @@ const logIn = async (req: Request, res: Response) => {
                 res.status(200).json({ message: "already logged in" });
             }
             else {
-                res.status(404).json({ message: "incorrect username or password" })
+                res.status(401).json({ message: "incorrect username or password" })
             }
         }
 
@@ -67,7 +74,7 @@ const userDetail = async (req: Request, res: Response) => {
         if (user) {
             res.status(200).json(user)
         } else {
-            res.status(404).json({ message: "could not find user" })
+            res.status(401).json({ message: "could not find user" })
         }
     }
     catch (err) {
@@ -97,7 +104,7 @@ const deleteUser = async (req: Request, res: Response) => {
                     res.status(200).json({ message: "user deleted successfully", user: data })
                 }
                 else {
-                    res.status(404).json({ message: "user does not exist" })
+                    res.status(401).json({ message: "user does not exist" })
                 }
             }
         })
@@ -114,10 +121,10 @@ const updateUser = async (req: Request, res: Response) => {
         const hashPassword = md5(password)
         User.findOneAndUpdate({ username: username }, { password: hashPassword, email: email, status: status }, null, (err, data) => {
             if (err) {
-                res.status(404).json({ error: true, message: err })
+                res.status(401).json({ error: true, message: err })
             }
             else {
-                res.status(200).json({ message: "user updated successfully.", user: data })
+                res.status(201).json({ message: "user updated successfully.", user: data })
             }
         });
     }
@@ -145,14 +152,12 @@ const sendMsg = async (req: Request, res: Response) => {
             })
         }
         else {
-            res.status(404).json({ message: 'toekn is not verified' })
+            res.status(401).json({ message: 'toekn is not verified' })
         }
-
     }
     catch (err) {
         res.status(404).json({ error: true, message: err })
     }
-
 }
 
 export { signUp, logIn, deleteUser, getAllUsers, userDetail, updateUser, sendMsg }

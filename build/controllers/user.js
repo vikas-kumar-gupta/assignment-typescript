@@ -23,18 +23,24 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { username, password, email, status } = req.body;
         const hashPassword = (0, md5_1.default)(password);
-        const query = { username: username, password: hashPassword, email: email, status: status };
-        const user = new users_1.default(query);
-        const token = jsonwebtoken_1.default.sign({ _id: user._id }, "satyamev-jayte");
-        res.cookie('jwt', token, { expires: new Date(Date.now() + 600000) });
-        user.save(err => {
-            if (err) {
-                res.status(404).json({ error: true, message: err.message });
-            }
-            else {
-                res.status(200).json({ message: "data updated successfully" });
-            }
-        });
+        const emailExists = yield users_1.default.findOne({ email: email });
+        if (!emailExists) {
+            const query = { username: username, password: hashPassword, email: email, status: status };
+            const user = new users_1.default(query);
+            const token = jsonwebtoken_1.default.sign({ _id: user._id }, "satyamev-jayte");
+            res.cookie('jwt', token, { expires: new Date(Date.now() + 600000) });
+            user.save(err => {
+                if (err) {
+                    res.status(404).json({ error: true, message: err.message });
+                }
+                else {
+                    res.status(200).json({ message: "data updated successfully" });
+                }
+            });
+        }
+        else {
+            res.status(404).json({ message: "email is already registered" });
+        }
     }
     catch (err) {
         res.status(404).json({ error: true, message: err });
