@@ -11,6 +11,7 @@ router.post('/login', user_1.isLoggedIn, user_2.logIn);
 router.post('/signup', user_2.signUp);
 router.get('/user/all', user_2.getAllUsers);
 router.get('/user/:username', user_1.isAuthored, user_2.userDetail);
+router.post('/send-msg', user_2.sendMsg);
 router.patch('/user/:username/edit', user_1.isAuthored, user_2.updateUser);
 router.delete('/user/:username/delete', user_1.isAuthored, user_2.deleteUser);
 exports.default = router;

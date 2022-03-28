@@ -9,7 +9,7 @@ const db_1 = __importDefault(require("./config/db"));
 const user_1 = __importDefault(require("./routes/user"));
 const normal_1 = __importDefault(require("./routes/normal"));
 const app = (0, express_1.default)();
-const port = 3000;
+const port = 4000;
 app.use(express_1.default.json());
 app.use((0, cookie_parser_1.default)());
 (0, db_1.default)();
