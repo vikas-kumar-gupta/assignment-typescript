@@ -19,7 +19,7 @@ const isLoggedIn = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
-const isAuthored = async (req: Request, res: Response, next: NextFunction) => {
+const auth = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const token = req.cookies.jwt;
         const verifyToken = jwt.verify(token, "satyamev-jayte")
@@ -30,4 +30,4 @@ const isAuthored = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
-export { isLoggedIn, isAuthored }
+export { isLoggedIn, auth }
