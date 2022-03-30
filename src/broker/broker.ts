@@ -9,5 +9,4 @@ const broker: any = new mosca.Server(settings);
 
 broker.on('ready', () => {
     console.log('broker connected');
-    
 })

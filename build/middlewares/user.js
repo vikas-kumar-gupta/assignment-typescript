@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isAuthored = exports.isLoggedIn = void 0;
+exports.auth = exports.isLoggedIn = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const isLoggedIn = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -31,7 +31,7 @@ const isLoggedIn = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.isLoggedIn = isLoggedIn;
-const isAuthored = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const auth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const token = req.cookies.jwt;
         const verifyToken = jsonwebtoken_1.default.verify(token, "satyamev-jayte");
@@ -41,4 +41,4 @@ const isAuthored = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         res.status(404).json({ error: true, message: err });
     }
 });
-exports.isAuthored = isAuthored;
+exports.auth = auth;
