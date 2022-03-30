@@ -18,6 +18,12 @@ const router = express.Router();
  *                      type: string
  *                  email:
  *                      type: string
+ *                  status:
+ *                      type: string
+ *                  createdAt:
+ *                      type: date
+ *                  updatedAt:
+ *                      type: date
  */
 
 /**
@@ -48,9 +54,19 @@ router.post('/login', isLoggedIn, logIn)
  *  post:
  *      summary: use signup
  *      description: user signup with parameter username, pasdsword and email
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      items:
+ *                          #ref: '#components/shemas/User'
  *      responses:
  *          200:
  *              description: created new user account
+ *          400:
+ *              description: email or username is already registered
  */
 router.post('/signup', signUp)
 
@@ -101,6 +117,14 @@ router.post('/send-msg', sendMsg)
  *            description: String username required
  *            schema:
  *              type: string
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      items:
+ *                          #ref: '#components/shemas/User'
  *      responses:
  *          200:
  *              description: created new user account
@@ -124,7 +148,7 @@ router.patch('/user/:username/edit', auth, updateUser)
  *              type: string
  *      responses:
  *          200:
- *              description: created new user account
+ *              description: user deleted
  *          400:
  *              description: user doesn't exist 
  */

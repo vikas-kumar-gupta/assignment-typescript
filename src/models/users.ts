@@ -5,7 +5,7 @@ interface User {
     password: String,
     email: String,
     status: String,
-    createdAt: Number,
+    createdAt: Date,
     updatedAt: Date,
 }
 
@@ -28,7 +28,7 @@ const userSchema = new Schema<User>({
         default: 'active',
     },
     createdAt: {
-        type: Number,
+        type: Date,
         required: true
     },
     updatedAt: {
