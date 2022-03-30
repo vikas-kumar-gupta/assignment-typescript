@@ -1,9 +1,24 @@
 import express, { Request, Response } from 'express';
 import { isLoggedIn, auth } from '../middlewares/user'
-import { signUp, logIn, deleteUser, userDetail, getAllUsers, updateUser, sendMsg } from '../controllers/user'
+import { signUp, logIn, deleteUser, userDetail, getAllUsers, updateUser, sendMsg } from '../controllers/user.controller'
 
 
 const router = express.Router();
+
+/**
+ * @swagger
+ *  components:
+ *      schemas:
+ *          User:
+ *              type: object
+ *              properties:
+ *                  username:
+ *                      type: string
+ *                  password:
+ *                      type: string
+ *                  email:
+ *                      type: string
+ */
 
 /**
  * @swagger
@@ -11,6 +26,14 @@ const router = express.Router();
  *  post:
  *      summary: user log-in
  *      description: user login with parameter username and pasdsword
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      items:
+ *                          #ref: '#components/shemas/User'
  *      responses:
  *          200:
  *              description: rigth  credentials
@@ -45,13 +68,20 @@ router.get('/user/all-users', getAllUsers)
 
 /**
  * @swagger
- * /user/:username:
+ * /user/{username}:
  *  get:
  *      summary: user details
  *      description: All the data about a perticular username
+ *      parameters:
+ *          - in: path
+ *            name: username
+ *            required: true
+ *            description: String username required
+ *            schema:
+ *              type: string
  *      responses:
  *          200:
- *              description: created new user account
+ *              description: all the data about a perticular username
  *          400:
  *              description: user doesn't exist
  */
@@ -60,10 +90,17 @@ router.post('/send-msg', sendMsg)
 
 /**
  * @swagger
- * /user/:username/edit:
+ * /user/{username}/edit:
  *  patch:
  *      summary: edit user data
  *      description: edit the data of an user of given username
+ *      parameters:
+ *          - in: path
+ *            name: username
+ *            required: true
+ *            description: String username required
+ *            schema:
+ *              type: string
  *      responses:
  *          200:
  *              description: created new user account
@@ -74,10 +111,17 @@ router.patch('/user/:username/edit', auth, updateUser)
 
 /**
  * @swagger
- * /user/:username/delete:
+ * /user/{username}/delete:
  *  delete:
  *      summary: delete user
  *      description: delete the existing data of user of given username
+ *      parameters:
+ *          - in: path
+ *            name: username
+ *            required: true
+ *            description: String username required
+ *            schema:
+ *              type: string
  *      responses:
  *          200:
  *              description: created new user account

@@ -6,10 +6,10 @@ import dotenv from 'dotenv';
 
 import { CONFIG } from './constant'
 import connetion from './config/db'
-import userRoute from './routes/user'
-import normalRoute from './routes/normal'
+import userRoute from './routes/user.route'
+import normalRoute from './routes/normal.route'
 dotenv.config({path: '../.env'});
-// import brokerRoute from './routes/broker'
+// import brokerRoute from './routes/broker.route'
 
 const app: Application = express();
 
@@ -24,7 +24,7 @@ const options = {
         },
         servers: [
             {
-                url: `http://localhost:/${port}`
+                url: `http://localhost:${port}`
             }
         ]
     },

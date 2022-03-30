@@ -9,10 +9,10 @@ const swagger_jsdoc_1 = __importDefault(require("swagger-jsdoc"));
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const db_1 = __importDefault(require("./config/db"));
-const user_1 = __importDefault(require("./routes/user"));
-const normal_1 = __importDefault(require("./routes/normal"));
+const user_route_1 = __importDefault(require("./routes/user.route"));
+const normal_route_1 = __importDefault(require("./routes/normal.route"));
 dotenv_1.default.config({ path: '../.env' });
-// import brokerRoute from './routes/broker'
+// import brokerRoute from './routes/broker.route'
 const app = (0, express_1.default)();
 const port = process.env.PORT;
 const options = {
@@ -24,7 +24,7 @@ const options = {
         },
         servers: [
             {
-                url: `http://localhost:/${port}`
+                url: `http://localhost:${port}`
             }
         ]
     },
@@ -35,8 +35,8 @@ app.use('/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.de
 app.use(express_1.default.json());
 app.use((0, cookie_parser_1.default)());
 (0, db_1.default)();
-app.use('/', user_1.default);
-app.use('/', normal_1.default);
+app.use('/', user_route_1.default);
+app.use('/', normal_route_1.default);
 // app.use('/broker', brokerRoute)
 app.listen(port, () => {
     console.log(`listning on ${port}`);
