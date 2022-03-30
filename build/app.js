@@ -13,10 +13,6 @@ const user_1 = __importDefault(require("./routes/user"));
 const normal_1 = __importDefault(require("./routes/normal"));
 dotenv_1.default.config({ path: '../.env' });
 // import brokerRoute from './routes/broker'
-/**
- * TODO:
-    1. implement env variables
- */
 const app = (0, express_1.default)();
 const port = process.env.PORT;
 const options = {
@@ -28,27 +24,17 @@ const options = {
         },
         servers: [
             {
-                url: 'localhost:3000/'
+                url: `http://localhost:/${port}`
             }
         ]
     },
-    apis: ['./app.ts']
+    apis: ['../src/app.ts', '../src/routes/*.ts']
 };
 const swaggerSpecs = (0, swagger_jsdoc_1.default)(options);
 app.use('/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swaggerSpecs));
 app.use(express_1.default.json());
 app.use((0, cookie_parser_1.default)());
 (0, db_1.default)();
-/**
- * @swagger
- * /:login
- *  post:
- *      summary: This is user login route
- *      description: This is user login
- *      responses:
- *          200:
- *              description: to test post method
- */
 app.use('/', user_1.default);
 app.use('/', normal_1.default);
 // app.use('/broker', brokerRoute)

@@ -30,7 +30,7 @@
     "mongoose": "^6.2.8",
     "mosca": "^2.8.3",
     "mqtt": "^4.3.7",
-    "swagger-jsdoc": "^6.1.0",
+    "swagger-jsdoc": "^6.0.0",
     "swagger-ui-express": "^4.3.0"
   }
 }

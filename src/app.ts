@@ -4,20 +4,15 @@ import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUI from 'swagger-ui-express';
 import dotenv from 'dotenv';
 
-
+import { CONFIG } from './constant'
 import connetion from './config/db'
 import userRoute from './routes/user'
 import normalRoute from './routes/normal'
 dotenv.config({path: '../.env'});
 // import brokerRoute from './routes/broker'
 
-/**
- * TODO:
-    1. implement env variables
- */
-
-
 const app: Application = express();
+
 const port = process.env.PORT
 
 const options = {
@@ -29,11 +24,11 @@ const options = {
         },
         servers: [
             {
-                url: 'localhost:3000/'
+                url: `http://localhost:/${port}`
             }
         ]
     },
-    apis: ['./app.ts']
+    apis: ['../src/app.ts', '../src/routes/*.ts']
 }
 
 const swaggerSpecs = swaggerJSDoc(options)
@@ -43,17 +38,6 @@ app.use(express.json())
 app.use(cookieParser())
 
 connetion();
-
-/**
- * @swagger
- * /:login
- *  post:
- *      summary: This is user login route
- *      description: This is user login
- *      responses:
- *          200:
- *              description: to test post method
- */
 
 app.use('/', userRoute)
 app.use('/', normalRoute)

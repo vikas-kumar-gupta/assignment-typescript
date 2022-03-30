@@ -1,7 +1,10 @@
 import mongoose, {connect} from 'mongoose';
+import dotenv from 'dotenv';
+dotenv.config({path: '../../.env'});
+
 
 const connection = async () => {
-    return connect("mongodb://localhost:27017/test")
+    return connect(<string>process.env.MONGODB_URL)
     .then(() => {
         console.log('database connection established');
     })
