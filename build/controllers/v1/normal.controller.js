@@ -9,13 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.pathNotFond = exports.landingPage = void 0;
+exports.pageNotFond = exports.landingPage = void 0;
+const constant_1 = require("../../constant");
 const landingPage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.status(200).json({ message: "Welcome to the landing page" });
+    res.status(constant_1.STATUS_MSG.SUCCESS.DEFAULT.statusCode).json(constant_1.STATUS_MSG.SUCCESS.DEFAULT);
 });
 exports.landingPage = landingPage;
-const pathNotFond = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.status(404).json({ message: "Path Not Found" });
+const pageNotFond = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.status(constant_1.STATUS_MSG.ERROR.PAGE_NOT_FOUND.statusCode).json(constant_1.STATUS_MSG.ERROR.PAGE_NOT_FOUND);
 });
-exports.pathNotFond = pathNotFond;
-// export {landingPage, pathNotFond}
+exports.pageNotFond = pageNotFond;

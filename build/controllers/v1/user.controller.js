@@ -17,6 +17,7 @@ const express_1 = __importDefault(require("express"));
 const mqtt_1 = __importDefault(require("mqtt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const md5_1 = __importDefault(require("md5"));
+// console.log(STATUS_MSG.SUCCESS.DEFAULT);
 const app = (0, express_1.default)();
 const users_model_1 = __importDefault(require("../../models/users.model"));
 /**
@@ -183,4 +184,3 @@ const sendMsg = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.sendMsg = sendMsg;
-// export { signUp, logIn, deleteUser, getAllUsers, userDetail, updateUser, sendMsg }

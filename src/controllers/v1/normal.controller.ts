@@ -1,11 +1,10 @@
+import {STATUS_MSG} from '../../constant'
 import express, { Request, Response } from 'express';
 
 export const landingPage = async (req: Request, res: Response) => {
-    res.status(200).json({ message: "Welcome to the landing page" })
+    res.status(STATUS_MSG.SUCCESS.DEFAULT.statusCode).json(STATUS_MSG.SUCCESS.DEFAULT);
 }
 
-export const pathNotFond = async (req: Request, res: Response) => {
-    res.status(404).json({ message: "Path Not Found" });
+export const pageNotFond = async (req: Request, res: Response) => {
+    res.status(STATUS_MSG.ERROR.PAGE_NOT_FOUND.statusCode).json(STATUS_MSG.ERROR.PAGE_NOT_FOUND);
 }
-
-// export {landingPage, pathNotFond}

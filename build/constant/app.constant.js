@@ -57,7 +57,7 @@ exports.STATUS_MSG = {
             statusCode: 400,
             success: false,
             type: 'PAGE_NOT_FOUND',
-            message: 'Please not found!'
+            message: 'Page not found!'
         },
         TOKEN_ALREADY_EXPIRED: {
             statusCode: 408,

@@ -1,7 +1,11 @@
+import {STATUS_MSG} from '../../constant'
 import express, { Application, Request, Response } from 'express';
 import mqtt from 'mqtt';
 import jwt from 'jsonwebtoken';
 import md5 from 'md5';
+
+// console.log(STATUS_MSG.SUCCESS.DEFAULT);
+
 
 const app: Application = express();
 
@@ -175,5 +179,3 @@ export const sendMsg = async (req: Request, res: Response) => {
         res.status(404).json({ error: true, message: err })
     }
 }
-
-// export { signUp, logIn, deleteUser, getAllUsers, userDetail, updateUser, sendMsg }

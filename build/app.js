@@ -43,6 +43,7 @@ const port = process.env.PORT;
  * 2. Update controllers error
  * 3. implement constant messages
  * 4. validation (DB, requests)
+ * 5. swagger responses                         Done
  *
  * @fix
  * 1. .env path
