@@ -13,11 +13,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendMsg = exports.updateUser = exports.deleteUser = exports.getAllUsers = exports.userDetail = exports.logIn = exports.signUp = void 0;
+const constant_1 = require("../../constant");
 const express_1 = __importDefault(require("express"));
 const mqtt_1 = __importDefault(require("mqtt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const md5_1 = __importDefault(require("md5"));
-// console.log(STATUS_MSG.SUCCESS.DEFAULT);
 const app = (0, express_1.default)();
 const users_model_1 = __importDefault(require("../../models/users.model"));
 /**
@@ -36,19 +36,21 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             res.cookie('jwt', token, { expires: new Date(Date.now() + 600000) });
             user.save(err => {
                 if (err) {
-                    res.status(404).json({ error: true, message: err.message });
+                    // res.status(404).json({ error: true, message: err.message });
+                    throw new Error(constant_1.STATUS_MSG.ERROR.BAD_REQUEST.message);
                 }
                 else {
-                    res.status(201).json({ message: "data updated successfully" });
+                    // res.status(201).json({ message: "data updated successfully" })
+                    res.status(201).json(constant_1.STATUS_MSG.SUCCESS.CREATED);
                 }
             });
         }
         else {
-            res.status(404).json({ message: "email or username is already registered" });
+            res.status(400).json({ message: "email or username is already registered" });
         }
     }
     catch (err) {
-        res.status(404).json({ error: true, message: err });
+        res.status(400).json(constant_1.STATUS_MSG.ERROR.BAD_REQUEST);
     }
 });
 exports.signUp = signUp;
@@ -65,23 +67,25 @@ const logIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             const newToken = jsonwebtoken_1.default.sign({ _id: user._id }, "satyamev-jayte");
             res.cookie('jwt', newToken, { expires: new Date(Date.now() + 600000) });
             if (user) {
-                res.status(200).json({ message: "login successful", user: user });
+                // res.status(200).json({ message: "login successful", user: user })
+                res.status(200).json(constant_1.STATUS_MSG.SUCCESS.DEFAULT);
             }
             else {
-                res.status(401).json({ message: "incorrect username or password" });
+                // res.status(401).json({ message: "incorrect username or password" })
+                res.status(400).json(constant_1.STATUS_MSG.ERROR.INCORRECT_CREDENTIALS);
             }
         }
         else {
             if (user) {
-                res.status(200).json({ message: "already logged in" });
+                res.status(200).json(constant_1.STATUS_MSG.ERROR.TOKEN_ALREADY_EXIST);
             }
             else {
-                res.status(401).json({ message: "incorrect username or password" });
+                res.status(400).json(constant_1.STATUS_MSG.ERROR.INCORRECT_CREDENTIALS);
             }
         }
     }
     catch (err) {
-        res.status(404).json({ error: true, message: err });
+        res.status(400).json(constant_1.STATUS_MSG.ERROR.BAD_REQUEST);
     }
 });
 exports.logIn = logIn;
@@ -96,11 +100,11 @@ const userDetail = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             res.status(200).json(user);
         }
         else {
-            res.status(401).json({ message: "could not find user" });
+            res.status(400).json(constant_1.STATUS_MSG.ERROR.NOT_EXIST(username));
         }
     }
     catch (err) {
-        res.status(404).json({ error: true, message: err });
+        res.status(400).json(constant_1.STATUS_MSG.ERROR.BAD_REQUEST);
     }
 });
 exports.userDetail = userDetail;
@@ -110,10 +114,13 @@ exports.userDetail = userDetail;
 const getAllUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = yield users_model_1.default.find();
-        res.status(200).json({ numberOfUsers: user.length, usersData: user });
+        if (!user) {
+            res.status(404).json(constant_1.STATUS_MSG.ERROR.BAD_REQUEST);
+        }
+        res.status(200).json(user);
     }
     catch (err) {
-        res.status(404).json({ error: true, message: err });
+        res.status(400).json(constant_1.STATUS_MSG.ERROR.BAD_REQUEST);
     }
 });
 exports.getAllUsers = getAllUsers;
@@ -126,16 +133,18 @@ const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             }
             else {
                 if (data) {
-                    res.status(200).json({ message: "user deleted successfully", user: data });
+                    // res.status(200).json({ message: "user deleted successfully", user: data })
+                    res.status(200).json(constant_1.STATUS_MSG.SUCCESS.DELETED);
                 }
                 else {
-                    res.status(401).json({ message: "user does not exist" });
+                    // res.status(401).json({ message: "user does not exist" })
+                    res.status(400).json(constant_1.STATUS_MSG.ERROR.NOT_EXIST(username));
                 }
             }
         });
     }
     catch (err) {
-        res.status(404).json({ error: true, message: err });
+        res.status(400).json(constant_1.STATUS_MSG.ERROR.BAD_REQUEST);
     }
 });
 exports.deleteUser = deleteUser;
@@ -147,15 +156,15 @@ const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const updatedAt = new Date().getTime();
         users_model_1.default.findOneAndUpdate({ username: username }, { password: hashPassword, email: email, status: status, updatedAt: updatedAt }, null, (err, data) => {
             if (err) {
-                res.status(401).json({ error: true, message: err });
+                res.status(400).json(constant_1.STATUS_MSG.ERROR.BAD_REQUEST);
             }
             else {
-                res.status(201).json({ message: "user updated successfully.", user: data });
+                res.status(200).json(constant_1.STATUS_MSG.SUCCESS.UPDATED);
             }
         });
     }
     catch (err) {
-        res.status(404).json({ error: true, message: err });
+        res.status(400).json(constant_1.STATUS_MSG.ERROR.BAD_REQUEST);
     }
 });
 exports.updateUser = updateUser;
@@ -176,11 +185,11 @@ const sendMsg = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             });
         }
         else {
-            res.status(401).json({ message: 'toekn is not verified' });
+            res.status(401).json(constant_1.STATUS_MSG.SUCCESS.DEFAULT);
         }
     }
     catch (err) {
-        res.status(404).json({ error: true, message: err });
+        res.status(400).json(constant_1.STATUS_MSG.ERROR.BAD_REQUEST);
     }
 });
 exports.sendMsg = sendMsg;

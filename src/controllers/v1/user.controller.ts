@@ -4,9 +4,6 @@ import mqtt from 'mqtt';
 import jwt from 'jsonwebtoken';
 import md5 from 'md5';
 
-// console.log(STATUS_MSG.SUCCESS.DEFAULT);
-
-
 const app: Application = express();
 
 import User from '../../models/users.model'
@@ -28,20 +25,22 @@ export const signUp = async (req: Request, res: Response) => {
             res.cookie('jwt', token, { expires: new Date(Date.now() + 600000) })
             user.save(err => {
                 if (err) {
-                    res.status(404).json({ error: true, message: err.message });
+                    // res.status(404).json({ error: true, message: err.message });
+                    throw new Error(STATUS_MSG.ERROR.BAD_REQUEST.message)
                 }
                 else {
-                    res.status(201).json({ message: "data updated successfully" })
+                    // res.status(201).json({ message: "data updated successfully" })
+                    res.status(201).json(STATUS_MSG.SUCCESS.CREATED)
                 }
             })
         }
         else {
-            res.status(404).json({ message: "email or username is already registered" });
+            res.status(400).json({ message: "email or username is already registered" });
         }
 
     }
     catch (err) {
-        res.status(404).json({ error: true, message: err });
+        res.status(400).json(STATUS_MSG.ERROR.BAD_REQUEST);
     }
 }
 
@@ -58,24 +57,26 @@ export const logIn = async (req: Request, res: Response) => {
             const newToken = jwt.sign({ _id: user._id }, "satyamev-jayte")
             res.cookie('jwt', newToken, { expires: new Date(Date.now() + 600000) })
             if (user) {
-                res.status(200).json({ message: "login successful", user: user })
+                // res.status(200).json({ message: "login successful", user: user })
+                res.status(200).json(STATUS_MSG.SUCCESS.DEFAULT)
             }
             else {
-                res.status(401).json({ message: "incorrect username or password" })
+                // res.status(401).json({ message: "incorrect username or password" })
+                res.status(400).json(STATUS_MSG.ERROR.INCORRECT_CREDENTIALS)
             }
         }
         else {
             if (user) {
-                res.status(200).json({ message: "already logged in" });
+                res.status(200).json(STATUS_MSG.ERROR.TOKEN_ALREADY_EXIST);
             }
             else {
-                res.status(401).json({ message: "incorrect username or password" })
+                res.status(400).json(STATUS_MSG.ERROR.INCORRECT_CREDENTIALS)
             }
         }
 
     }
     catch (err) {
-        res.status(404).json({ error: true, message: err });
+        res.status(400).json(STATUS_MSG.ERROR.BAD_REQUEST);
     }
 }
 
@@ -89,11 +90,11 @@ export const userDetail = async (req: Request, res: Response) => {
         if (user) {
             res.status(200).json(user)
         } else {
-            res.status(401).json({ message: "could not find user" })
+            res.status(400).json(STATUS_MSG.ERROR.NOT_EXIST(username))
         }
     }
     catch (err) {
-        res.status(404).json({ error: true, message: err });
+        res.status(400).json(STATUS_MSG.ERROR.BAD_REQUEST);
     }
 }
 
@@ -104,10 +105,13 @@ export const userDetail = async (req: Request, res: Response) => {
 export const getAllUsers = async (req: Request, res: Response) => {
     try {
         const user = await User.find();
-        res.status(200).json({ numberOfUsers: user.length, usersData: user });
+        if(!user) {
+            res.status(404).json(STATUS_MSG.ERROR.BAD_REQUEST)
+        }
+        res.status(200).json(user);
     }
     catch (err) {
-        res.status(404).json({ error: true, message: err });
+        res.status(400).json(STATUS_MSG.ERROR.BAD_REQUEST);
     }
 }
 
@@ -120,16 +124,18 @@ export const deleteUser = async (req: Request, res: Response) => {
             }
             else {
                 if (data) {
-                    res.status(200).json({ message: "user deleted successfully", user: data })
+                    // res.status(200).json({ message: "user deleted successfully", user: data })
+                    res.status(200).json(STATUS_MSG.SUCCESS.DELETED)
                 }
                 else {
-                    res.status(401).json({ message: "user does not exist" })
+                    // res.status(401).json({ message: "user does not exist" })
+                    res.status(400).json(STATUS_MSG.ERROR.NOT_EXIST(username))
                 }
             }
         })
     }
     catch (err) {
-        res.status(404).json({ error: true, message: err })
+        res.status(400).json(STATUS_MSG.ERROR.BAD_REQUEST)
     }
 }
 
@@ -141,15 +147,15 @@ export const updateUser = async (req: Request, res: Response) => {
         const updatedAt: Number = new Date().getTime();
         User.findOneAndUpdate({ username: username }, { password: hashPassword, email: email, status: status, updatedAt: updatedAt }, null, (err, data) => {
             if (err) {
-                res.status(401).json({ error: true, message: err })
+                res.status(400).json(STATUS_MSG.ERROR.BAD_REQUEST)
             }
             else {
-                res.status(201).json({ message: "user updated successfully.", user: data })
+                res.status(200).json(STATUS_MSG.SUCCESS.UPDATED )
             }
         });
     }
     catch (err) {
-        res.status(404).json({ error: true, message: err })
+        res.status(400).json(STATUS_MSG.ERROR.BAD_REQUEST)
     }
 }
 
@@ -172,10 +178,10 @@ export const sendMsg = async (req: Request, res: Response) => {
             })
         }
         else {
-            res.status(401).json({ message: 'toekn is not verified' })
+            res.status(401).json(STATUS_MSG.SUCCESS.DEFAULT)
         }
     }
     catch (err) {
-        res.status(404).json({ error: true, message: err })
+        res.status(400).json(STATUS_MSG.ERROR.BAD_REQUEST)
     }
 }

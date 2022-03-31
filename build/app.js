@@ -26,17 +26,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const constant_1 = require("./constant");
 const express_1 = __importDefault(require("express"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const swagger_jsdoc_1 = __importDefault(require("swagger-jsdoc"));
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
-const dotenv_1 = __importDefault(require("dotenv"));
 const db_1 = __importDefault(require("./config/db"));
 const v1Route = __importStar(require("./routes/index"));
-dotenv_1.default.config({ path: '../.env' });
+// import {swaggerFunc} from './lib/swagger'
 // import brokerRoute from './routes/broker.route'
 const app = (0, express_1.default)();
-const port = process.env.PORT;
+const port = constant_1.CONFIG.PORT;
 /**
  * TODO:
  * 1. remove extra files (after versioning)     Done
@@ -58,12 +58,23 @@ const options = {
             version: '1.0.0',
             description: 'complete setup of node project following the standards and file architectures'
         },
+        // schemes:['https', 'http'],
         // basePath: '/v1',
         servers: [
             {
                 url: `http://localhost:${port}`
             }
-        ]
+        ],
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: "http",
+                    name: "x-auth-token",
+                    scheme: "bearer",
+                    in: "header",
+                },
+            },
+        }
     },
     apis: ['../src/app.ts', '../src/routes/v1/*.ts']
 };

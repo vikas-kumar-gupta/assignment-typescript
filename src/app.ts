@@ -3,16 +3,15 @@ import express, { Application, Request, Response } from 'express';
 import cookieParser from 'cookie-parser';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUI from 'swagger-ui-express';
-import dotenv from 'dotenv';
 
 import connetion from './config/db'
 import * as v1Route from './routes/index'
-dotenv.config({path: '../.env'});
+// import {swaggerFunc} from './lib/swagger'
 // import brokerRoute from './routes/broker.route'
 
 const app: Application = express();
 
-const port = process.env.PORT
+const port = CONFIG.PORT
 
 /**
  * TODO:
@@ -36,12 +35,23 @@ const options = {
             version: '1.0.0',
             description: 'complete setup of node project following the standards and file architectures'
         },
+        // schemes:['https', 'http'],
         // basePath: '/v1',
         servers: [
             {
                 url: `http://localhost:${port}`
             }
-        ]
+        ],
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: "http",
+                    name: "x-auth-token",
+                    scheme: "bearer",
+                    in: "header",
+                },
+            },
+        }
     },
     apis: ['../src/app.ts', '../src/routes/v1/*.ts']
 }

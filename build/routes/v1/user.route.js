@@ -7,6 +7,14 @@ const express_1 = __importDefault(require("express"));
 const user_1 = require("../../middlewares/user");
 const index_1 = require("../../controllers/index");
 const router = express_1.default.Router();
+// CREATING TAGS
+/**
+ * @swagger
+ * tags:
+ *  name: User
+ *  description: User Routes
+ */
+// CREATING SCHEMA
 /**
  * @swagger
  *  components:
@@ -38,6 +46,7 @@ const router = express_1.default.Router();
  * /v1/login:
  *  post:
  *      summary: user log-in
+ *      tags: [User]
  *      description: user login with parameter username and pasdsword
  *      requestBody:
  *          required: true
@@ -69,6 +78,7 @@ router.post('/login', user_1.isLoggedIn, index_1.userController.logIn);
  * @swagger
  * /v1/signup:
  *  post:
+ *      tags: [User]
  *      summary: use signup
  *      description: user signup with parameter username, pasdsword and email
  *      requestBody:
@@ -104,6 +114,7 @@ router.post('/signup', index_1.userController.signUp);
  * @swagger
  * /v1/user/all-users:
  *  get:
+ *      tags: [User]
  *      summary: All user details
  *      description: list all the users data
  *      responses:
@@ -123,6 +134,7 @@ router.get('/user/all-users', index_1.userController.getAllUsers);
  * @swagger
  * /v1/user/{username}:
  *  get:
+ *      tags: [User]
  *      summary: user details
  *      description: All the data about a perticular username
  *      parameters:
@@ -150,6 +162,7 @@ router.post('/send-msg', index_1.userController.sendMsg);
  * @swagger
  * /v1/user/{username}/edit:
  *  patch:
+ *      tags: [User]
  *      summary: edit user data
  *      description: edit the data of an user of given username
  *      parameters:
@@ -195,6 +208,7 @@ router.patch('/user/:username/edit', user_1.auth, index_1.userController.updateU
  * @swagger
  * /v1/user/{username}/delete:
  *  delete:
+ *      tags: [User]
  *      summary: delete user
  *      description: delete the existing data of user of given username
  *      parameters:

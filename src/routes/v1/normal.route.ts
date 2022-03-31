@@ -4,10 +4,20 @@ import {normalController} from '../../controllers/index'
 
 const router = express.Router();
 
+// CREATING TAGS
+
+/**
+ * @swagger
+ * tags:
+ *  name: Default
+ *  description: Default Routes
+ */
+
 /**
  * @swagger
  * /v1/:
  *  get:
+ *      tags: [Default]
  *      summary: landing page
  *      description: landing page of the project
  *      responses:
@@ -28,6 +38,7 @@ router.get('/', normalController.landingPage)
  * @swagger
  * /v1/*:
  *  get:
+ *      tags: [Default]
  *      summary: page not found
  *      description: all the undefined paths will be routed here to show PAGE_NOT_FOUND
  *      responses:

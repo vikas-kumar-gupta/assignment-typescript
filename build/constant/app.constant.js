@@ -65,6 +65,12 @@ exports.STATUS_MSG = {
             message: 'Your session has expired. Please logout and login again.',
             type: 'TOKEN_ALREADY_EXPIRED'
         },
+        TOKEN_ALREADY_EXIST: {
+            statusCode: 400,
+            success: false,
+            type: 'TOKEN_ALREADY_EXIST',
+            message: 'Your session has already logged in'
+        },
         DB_ERROR: {
             statusCode: 400,
             success: false,
