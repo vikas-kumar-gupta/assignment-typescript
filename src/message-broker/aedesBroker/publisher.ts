@@ -1,5 +1,5 @@
 const mqtt = require('async-mqtt');
-import User from '../models/users.medel'
+import User from '../../models/users.model'
 async function emmmmmit(options: any) {
     const {username, password, message} = options;
     try{

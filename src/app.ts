@@ -6,8 +6,6 @@ import swaggerUI from 'swagger-ui-express';
 import dotenv from 'dotenv';
 
 import connetion from './config/db'
-import userRoute from './routes/user.route'
-import normalRoute from './routes/normal.route'
 import * as v1Route from './routes/index'
 dotenv.config({path: '../.env'});
 // import brokerRoute from './routes/broker.route'
@@ -15,6 +13,19 @@ dotenv.config({path: '../.env'});
 const app: Application = express();
 
 const port = process.env.PORT
+
+/**
+ * TODO:
+ * 1. remove extra files (after versioning)     Done
+ * 2. Update controllers error
+ * 3. implement constant messages
+ * 4. validation (DB, requests)
+ * 
+ * @fix
+ * 1. .env path
+ * 2. message-broker
+ * 
+ */
 
 const options = {
     definition: {
@@ -48,12 +59,6 @@ connetion();
 // v1 routes
 app.use('/v1', v1Route.userRoute.default)
 app.use('/v1', v1Route.normalRoute.default)
-
-// all the mount paths
-// app.use('/', userRoute)
-// app.use('/', normalRoute)
-
-// app.use('/broker', brokerRoute)
 
 app.listen(port, (): void => {  
     console.log(`listning on ${port}`);

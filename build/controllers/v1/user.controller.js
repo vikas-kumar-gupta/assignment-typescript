@@ -18,7 +18,7 @@ const mqtt_1 = __importDefault(require("mqtt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const md5_1 = __importDefault(require("md5"));
 const app = (0, express_1.default)();
-const users_medel_1 = __importDefault(require("../../models/users.medel"));
+const users_model_1 = __importDefault(require("../../models/users.model"));
 /**
  * @description this method will recieve the username, password and email from the body
  */
@@ -26,11 +26,11 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { username, password, email, status } = req.body;
         const hashPassword = (0, md5_1.default)(password);
-        const userExists = yield users_medel_1.default.findOne({ $or: [{ email: email }, { username: username }] });
+        const userExists = yield users_model_1.default.findOne({ $or: [{ email: email }, { username: username }] });
         if (!userExists) {
             const createdAt = new Date().getTime();
             const query = { username: username, password: hashPassword, email: email, status: status, createdAt: createdAt };
-            const user = new users_medel_1.default(query);
+            const user = new users_model_1.default(query);
             const token = jsonwebtoken_1.default.sign({ _id: user._id }, "satyamev-jayte");
             res.cookie('jwt', token, { expires: new Date(Date.now() + 600000) });
             user.save(err => {
@@ -58,7 +58,7 @@ const logIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { username, password } = req.body;
         const hashPassword = (0, md5_1.default)(password);
-        const user = yield users_medel_1.default.findOne({ username: username, password: hashPassword });
+        const user = yield users_model_1.default.findOne({ username: username, password: hashPassword });
         const token = req.cookies.jwt;
         if (token == undefined && user) {
             const newToken = jsonwebtoken_1.default.sign({ _id: user._id }, "satyamev-jayte");
@@ -90,7 +90,7 @@ exports.logIn = logIn;
 const userDetail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const username = req.params.username;
-        const user = yield users_medel_1.default.findOne({ username: username });
+        const user = yield users_model_1.default.findOne({ username: username });
         if (user) {
             res.status(200).json(user);
         }
@@ -108,7 +108,7 @@ exports.userDetail = userDetail;
  */
 const getAllUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const user = yield users_medel_1.default.find();
+        const user = yield users_model_1.default.find();
         res.status(200).json({ numberOfUsers: user.length, usersData: user });
     }
     catch (err) {
@@ -119,7 +119,7 @@ exports.getAllUsers = getAllUsers;
 const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const username = req.params.username;
-        const user = users_medel_1.default.findOneAndDelete({ username: username }, (err, data) => {
+        const user = users_model_1.default.findOneAndDelete({ username: username }, (err, data) => {
             if (err) {
                 res.status(404).json({ error: true, message: err });
             }
@@ -144,7 +144,7 @@ const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const { password, email, status } = req.body;
         const hashPassword = (0, md5_1.default)(password);
         const updatedAt = new Date().getTime();
-        users_medel_1.default.findOneAndUpdate({ username: username }, { password: hashPassword, email: email, status: status, updatedAt: updatedAt }, null, (err, data) => {
+        users_model_1.default.findOneAndUpdate({ username: username }, { password: hashPassword, email: email, status: status, updatedAt: updatedAt }, null, (err, data) => {
             if (err) {
                 res.status(401).json({ error: true, message: err });
             }

@@ -26,3 +26,4 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.normalRoute = exports.userRoute = void 0;
 exports.userRoute = __importStar(require("./v1/user.route"));
 exports.normalRoute = __importStar(require("./v1/normal.route"));
+// export * as brokerRoute from './v1/broker.route'

@@ -5,7 +5,7 @@ import md5 from 'md5';
 
 const app: Application = express();
 
-import User from '../../models/users.medel'
+import User from '../../models/users.model'
 
 /**
  * @description this method will recieve the username, password and email from the body
