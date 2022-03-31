@@ -12,13 +12,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendMsg = exports.updateUser = exports.userDetail = exports.getAllUsers = exports.deleteUser = exports.logIn = exports.signUp = void 0;
+exports.sendMsg = exports.updateUser = exports.deleteUser = exports.getAllUsers = exports.userDetail = exports.logIn = exports.signUp = void 0;
 const express_1 = __importDefault(require("express"));
 const mqtt_1 = __importDefault(require("mqtt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const md5_1 = __importDefault(require("md5"));
 const app = (0, express_1.default)();
-const users_medel_1 = __importDefault(require("../models/users.medel"));
+const users_medel_1 = __importDefault(require("../../models/users.medel"));
 /**
  * @description this method will recieve the username, password and email from the body
  */
@@ -183,3 +183,4 @@ const sendMsg = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.sendMsg = sendMsg;
+// export { signUp, logIn, deleteUser, getAllUsers, userDetail, updateUser, sendMsg }

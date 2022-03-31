@@ -1,9 +1,12 @@
-import express, { Request, Response } from 'express';
-import { isLoggedIn, auth } from '../middlewares/user'
-import { signUp, logIn, deleteUser, userDetail, getAllUsers, updateUser, sendMsg } from '../controllers/user.controller'
-
-const router = express.Router();
-
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const user_1 = require("../../middlewares/user");
+const index_1 = require("../../controllers/index");
+const router = express_1.default.Router();
 /**
  * @swagger
  *  components:
@@ -24,10 +27,9 @@ const router = express.Router();
  *                  updatedAt:
  *                      type: date
  */
-
 /**
  * @swagger
- * /login:
+ * /v1/login:
  *  post:
  *      summary: user log-in
  *      description: user login with parameter username and pasdsword
@@ -45,11 +47,10 @@ const router = express.Router();
  *          401:
  *              description: Unauthorized access
  */
-router.post('/login', isLoggedIn, logIn)
-
+router.post('/login', user_1.isLoggedIn, index_1.userController.logIn);
 /**
  * @swagger
- * /signup:
+ * /v1/signup:
  *  post:
  *      summary: use signup
  *      description: user signup with parameter username, pasdsword and email
@@ -67,11 +68,10 @@ router.post('/login', isLoggedIn, logIn)
  *          400:
  *              description: email or username is already registered
  */
-router.post('/signup', signUp)
-
+router.post('/signup', index_1.userController.signUp);
 /**
  * @swagger
- * /user/all-users:
+ * /v1/user/all-users:
  *  get:
  *      summary: All user details
  *      description: list all the users data
@@ -79,11 +79,10 @@ router.post('/signup', signUp)
  *          200:
  *              description: created new user account
  */
-router.get('/user/all-users', getAllUsers)
-
+router.get('/user/all-users', index_1.userController.getAllUsers);
 /**
  * @swagger
- * /user/{username}:
+ * /v1/user/{username}:
  *  get:
  *      summary: user details
  *      description: All the data about a perticular username
@@ -91,7 +90,7 @@ router.get('/user/all-users', getAllUsers)
  *          - in: path
  *            name: username
  *            required: true
- *            description: String username required
+ *            description: string username required
  *            schema:
  *              type: string
  *      responses:
@@ -100,12 +99,11 @@ router.get('/user/all-users', getAllUsers)
  *          400:
  *              description: user doesn't exist
  */
-router.get('/user/:username', auth, userDetail)
-router.post('/send-msg', sendMsg)
-
+router.get('/user/:username', user_1.auth, index_1.userController.userDetail);
+router.post('/send-msg', index_1.userController.sendMsg);
 /**
  * @swagger
- * /user/{username}/edit:
+ * /v1/user/{username}/edit:
  *  patch:
  *      summary: edit user data
  *      description: edit the data of an user of given username
@@ -128,13 +126,12 @@ router.post('/send-msg', sendMsg)
  *          200:
  *              description: created new user account
  *          400:
- *              description: user doesn't exist 
+ *              description: user doesn't exist
  */
-router.patch('/user/:username/edit', auth, updateUser)
-
+router.patch('/user/:username/edit', user_1.auth, index_1.userController.updateUser);
 /**
  * @swagger
- * /user/{username}/delete:
+ * /v1/user/{username}/delete:
  *  delete:
  *      summary: delete user
  *      description: delete the existing data of user of given username
@@ -149,8 +146,7 @@ router.patch('/user/:username/edit', auth, updateUser)
  *          200:
  *              description: user deleted
  *          400:
- *              description: user doesn't exist 
+ *              description: user doesn't exist
  */
-router.delete('/user/:username/delete', auth, deleteUser)
-
-export default router;
+router.delete('/user/:username/delete', user_1.auth, index_1.userController.deleteUser);
+exports.default = router;

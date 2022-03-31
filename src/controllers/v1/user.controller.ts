@@ -5,13 +5,13 @@ import md5 from 'md5';
 
 const app: Application = express();
 
-import User from '../models/users.medel'
+import User from '../../models/users.medel'
 
 /**
  * @description this method will recieve the username, password and email from the body
  */
 
-const signUp = async (req: Request, res: Response) => {
+export const signUp = async (req: Request, res: Response) => {
     try {
         const { username, password, email, status }: any = req.body;
         const hashPassword = md5(password);
@@ -44,7 +44,7 @@ const signUp = async (req: Request, res: Response) => {
 /**
  * @description this method will recieve the username and password from the body
  */
-const logIn = async (req: Request, res: Response) => {
+export const logIn = async (req: Request, res: Response) => {
     try {
         const { username, password } = req.body;
         const hashPassword = md5(password)
@@ -78,7 +78,7 @@ const logIn = async (req: Request, res: Response) => {
 /**
  * @description receives the user data from body to be updated
  */
-const userDetail = async (req: Request, res: Response) => {
+export const userDetail = async (req: Request, res: Response) => {
     try {
         const username = req.params.username;
         const user = await User.findOne({ username: username })
@@ -97,7 +97,7 @@ const userDetail = async (req: Request, res: Response) => {
 /**
  * @description displays all the user 
  */
-const getAllUsers = async (req: Request, res: Response) => {
+export const getAllUsers = async (req: Request, res: Response) => {
     try {
         const user = await User.find();
         res.status(200).json({ numberOfUsers: user.length, usersData: user });
@@ -107,7 +107,7 @@ const getAllUsers = async (req: Request, res: Response) => {
     }
 }
 
-const deleteUser = async (req: Request, res: Response) => {
+export const deleteUser = async (req: Request, res: Response) => {
     try {
         const username = req.params.username;
         const user = User.findOneAndDelete({ username: username }, (err: Error, data: User) => {
@@ -129,7 +129,7 @@ const deleteUser = async (req: Request, res: Response) => {
     }
 }
 
-const updateUser = async (req: Request, res: Response) => {
+export const updateUser = async (req: Request, res: Response) => {
     try {
         const username: String = req.params.username;
         const { password, email, status } = req.body;
@@ -149,7 +149,7 @@ const updateUser = async (req: Request, res: Response) => {
     }
 }
 
-const sendMsg = async (req: Request, res: Response) => {
+export const sendMsg = async (req: Request, res: Response) => {
     try {
         const token = req.cookies.jwt;
         if (token != undefined || null) {
@@ -176,4 +176,4 @@ const sendMsg = async (req: Request, res: Response) => {
     }
 }
 
-export { signUp, logIn, deleteUser, getAllUsers, userDetail, updateUser, sendMsg }
+// export { signUp, logIn, deleteUser, getAllUsers, userDetail, updateUser, sendMsg }

@@ -1,13 +1,14 @@
+import { CONFIG } from './constant'
 import express, { Application, Request, Response } from 'express';
 import cookieParser from 'cookie-parser';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUI from 'swagger-ui-express';
 import dotenv from 'dotenv';
 
-import { CONFIG } from './constant'
 import connetion from './config/db'
 import userRoute from './routes/user.route'
 import normalRoute from './routes/normal.route'
+import * as v1Route from './routes/index'
 dotenv.config({path: '../.env'});
 // import brokerRoute from './routes/broker.route'
 
@@ -19,30 +20,41 @@ const options = {
     definition: {
         openapi: '3.0.0',
         info: {
-            title: 'Complete NOde JS Project Setup',
-            version: '1.0.0'
+            title: 'Node JS Project Setup',
+            version: '1.0.0',
+            description: 'complete setup of node project following the standards and file architectures'
         },
+        // basePath: '/v1',
         servers: [
             {
                 url: `http://localhost:${port}`
             }
         ]
     },
-    apis: ['../src/app.ts', '../src/routes/*.ts']
+    apis: ['../src/app.ts', '../src/routes/v1/*.ts']
 }
 
 const swaggerSpecs = swaggerJSDoc(options)
 
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpecs))
+app.use('/v1/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpecs))
+
 app.use(express.json())
 app.use(cookieParser())
 
+// for database connection
 connetion();
 
-app.use('/', userRoute)
-app.use('/', normalRoute)
+// v1 routes
+app.use('/v1', v1Route.userRoute.default)
+app.use('/v1', v1Route.normalRoute.default)
+
+// all the mount paths
+// app.use('/', userRoute)
+// app.use('/', normalRoute)
+
 // app.use('/broker', brokerRoute)
 
-app.listen(port, (): void => {
+app.listen(port, (): void => {  
     console.log(`listning on ${port}`);
 })

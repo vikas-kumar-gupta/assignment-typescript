@@ -13,12 +13,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mqtt = require('async-mqtt');
-const users_1 = __importDefault(require("../models/users"));
+const users_medel_1 = __importDefault(require("../models/users.medel"));
 function emmmmmit(options) {
     return __awaiter(this, void 0, void 0, function* () {
         const { username, password, message } = options;
         try {
-            const user = yield users_1.default.findOne(options);
+            const user = yield users_medel_1.default.findOne(options);
             if (user) {
                 const client = mqtt.connect("http://localhost:5000", { username: username, password: password });
                 client.on('connect', () => {
