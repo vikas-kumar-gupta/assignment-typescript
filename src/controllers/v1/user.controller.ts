@@ -12,14 +12,13 @@ import User from '../../models/users.model'
  * @description this method will recieve the username, password and email from the body
  */
 
-export const signUp = async (req: Request, res: Response) => {
+export const signUp = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { username, password, email, status }: any = req.body;
         const userExists = await User.findOne({ $or: [{ email: email }, { username: username }] });
         if (!userExists) {
             const hashPassword = md5(password);
-            const createdAt: Number = new Date().getTime()
-            const query = { username: username, password: hashPassword, email: email, status: status, createdAt: createdAt }
+            const query = { username: username, password: hashPassword, email: email, status: status, createdAt: new Date().getTime() }
             const user = new User(query);
             const token: any = jwt.sign({ _id: user._id }, "satyamev-jayte")
             res.cookie('jwt', token, { expires: new Date(Date.now() + 600000) })
@@ -33,10 +32,11 @@ export const signUp = async (req: Request, res: Response) => {
             })
         }
         else {
-            res.status(400).json({ message: "email or username is already registered" });
+            res.status(400).json(STATUS_MSG.ERROR.DEFAULT_ERROR_MESSAGE('email or username is already registered'));
         }
     }
     catch (err) {
+        // next(err)
         res.status(STATUS_MSG.ERROR.BAD_REQUEST.statusCode).json(STATUS_MSG.ERROR.BAD_REQUEST);
     }
 }
@@ -71,6 +71,7 @@ export const logIn = async (req: Request, res: Response) => {
 
     }
     catch (err) {
+        // next(err)
         res.status(400).json(STATUS_MSG.ERROR.BAD_REQUEST);
     }
 }
@@ -101,11 +102,12 @@ export const getAllUsers = async (req: Request, res: Response) => {
     try {
         const user = await User.find();
         if (!user) {
-            res.status(404).json(STATUS_MSG.ERROR.BAD_REQUEST)
+            res.status(STATUS_MSG.SUCCESS.EMPTY_RECORD.statusCode).json(STATUS_MSG.SUCCESS.EMPTY_RECORD)
         }
         res.status(200).json(user);
     }
     catch (err) {
+        // next(err);
         res.status(400).json(STATUS_MSG.ERROR.BAD_REQUEST);
     }
 }
@@ -115,7 +117,7 @@ export const deleteUser = async (req: Request, res: Response) => {
         const username = req.params.username;
         const user = User.findOneAndDelete({ username: username }, (err: Error, data: User) => {
             if (err) {
-                res.status(404).json({ error: true, message: err })
+                throw err;
             }
             else {
                 if (data) {
