@@ -11,11 +11,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.pageNotFond = exports.landingPage = void 0;
 const constant_1 = require("../../constant");
-const landingPage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const landingPage = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     res.status(constant_1.STATUS_MSG.SUCCESS.DEFAULT.statusCode).json(constant_1.STATUS_MSG.SUCCESS.DEFAULT);
 });
 exports.landingPage = landingPage;
-const pageNotFond = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const pageNotFond = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     res.status(constant_1.STATUS_MSG.ERROR.PAGE_NOT_FOUND.statusCode).json(constant_1.STATUS_MSG.ERROR.PAGE_NOT_FOUND);
 });
 exports.pageNotFond = pageNotFond;

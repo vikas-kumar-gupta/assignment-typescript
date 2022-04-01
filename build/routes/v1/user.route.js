@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const user_1 = require("../../middlewares/user");
+const user_middleware_1 = require("../../middlewares/user.middleware");
 const index_1 = require("../../controllers/index");
 const router = express_1.default.Router();
 // CREATING TAGS
@@ -71,7 +71,7 @@ const router = express_1.default.Router();
  *          500:
  *              description: Internal server error
  */
-router.post('/login', user_1.isLoggedIn, index_1.userController.logIn);
+router.post('/login', user_middleware_1.isLoggedIn, index_1.userController.logIn);
 /**
  * @swagger
  * /v1/signup:
@@ -144,7 +144,7 @@ router.get('/user/all-users', index_1.userController.getAllUsers);
  *          500:
  *              description: Internal server error
  */
-router.get('/user/:username', user_1.auth, index_1.userController.userDetail);
+router.get('/user/:username', user_middleware_1.auth, index_1.userController.userDetail);
 router.post('/send-msg', index_1.userController.sendMsg);
 /**
  * @swagger
@@ -191,7 +191,7 @@ router.post('/send-msg', index_1.userController.sendMsg);
  *          500:
  *              description: Internal server error
  */
-router.patch('/user/:username/edit', user_1.auth, index_1.userController.updateUser);
+router.patch('/user/:username/edit', user_middleware_1.auth, index_1.userController.updateUser);
 /**
  * @swagger
  * /v1/user/{username}/deactivate:
@@ -217,7 +217,7 @@ router.patch('/user/:username/edit', user_1.auth, index_1.userController.updateU
  *          500:
  *              description: Internal server error
  */
-router.patch('/user/:username/deactivate', user_1.auth, index_1.userController.deactivateUser);
+router.patch('/user/:username/deactivate', user_middleware_1.auth, index_1.userController.deactivateUser);
 /**
  * @swagger
  * /v1/user/{username}/reactivate:
@@ -243,7 +243,7 @@ router.patch('/user/:username/deactivate', user_1.auth, index_1.userController.d
  *          500:
  *              description: Internal server error
  */
-router.patch('/user/:username/reactivate', user_1.auth, index_1.userController.reactivateUser);
+router.patch('/user/:username/reactivate', user_middleware_1.auth, index_1.userController.reactivateUser);
 /**
  * @swagger
  * /v1/user/{username}/delete:
@@ -268,5 +268,5 @@ router.patch('/user/:username/reactivate', user_1.auth, index_1.userController.r
  *          500:
  *              description: Internal server error
  */
-router.delete('/user/:username/delete', user_1.auth, index_1.userController.deleteUser);
+router.delete('/user/:username/delete', user_middleware_1.auth, index_1.userController.deleteUser);
 exports.default = router;

@@ -40,13 +40,13 @@ const port = constant_1.CONFIG.PORT;
 /**
  * TODO:
  * 1. remove extra files (after versioning)     Done
- * 2. Update controllers error
- * 3. implement constant messages
- * 4. validation (DB, requests)
+ * 2. Update controllers error                  Done
+ * 3. implement constant messages               Done
+ * 4. validation (DB, requests)                 Done
  * 5. swagger responses                         Done
  *
  * @fix
- * 1. .env path
+ * 1. .env path                                 Done
  * 2. message-broker
  *
  */
@@ -88,6 +88,7 @@ app.use((0, cookie_parser_1.default)());
 // v1 routes
 app.use('/v1', v1Route.userRoute.default);
 app.use('/v1', v1Route.normalRoute.default);
+// app.use(handleError)
 app.listen(port, () => {
     console.log(`listning on ${port}`);
 });
