@@ -68,8 +68,6 @@ const router = express_1.default.Router();
  *              description: Bad request
  *          401:
  *              description: Unauthorized
- *          404:
- *              description: Not found
  *          500:
  *              description: Internal server error
  */
@@ -102,10 +100,6 @@ router.post('/login', user_1.isLoggedIn, index_1.userController.logIn);
  *              description: Sucessfully created
  *          400:
  *              description: Bad request
- *          401:
- *              description: Unauthorized
- *          404:
- *              description: Not found
  *          500:
  *              description: Internal server error
  */
@@ -122,10 +116,6 @@ router.post('/signup', index_1.userController.signUp);
  *              description: Sucess
  *          400:
  *              description: Bad request
- *          401:
- *              description: Unauthorized
- *          404:
- *              description: Not found
  *          500:
  *              description: Internal server error
  */
@@ -151,8 +141,6 @@ router.get('/user/all-users', index_1.userController.getAllUsers);
  *              description: Bad request
  *          401:
  *              description: Unauthorized
- *          404:
- *              description: Not found
  *          500:
  *              description: Internal server error
  */
@@ -206,33 +194,6 @@ router.post('/send-msg', index_1.userController.sendMsg);
 router.patch('/user/:username/edit', user_1.auth, index_1.userController.updateUser);
 /**
  * @swagger
- * /v1/user/{username}/delete:
- *  delete:
- *      tags: [User]
- *      summary: delete user
- *      description: delete the existing data of user of given username
- *      parameters:
- *          - in: path
- *            name: username
- *            required: true
- *            description: String username required
- *            schema:
- *              type: string
- *      responses:
- *          200:
- *              description: Deletion sucess
- *          400:
- *              description: Bad request
- *          401:
- *              description: Unauthorized
- *          404:
- *              description: Not found
- *          500:
- *              description: Internal server error
- */
-router.delete('/user/:username/delete', user_1.auth, index_1.userController.deleteUser);
-/**
- * @swagger
  * /v1/user/{username}/deactivate:
  *  patch:
  *      tags: [User]
@@ -248,13 +209,11 @@ router.delete('/user/:username/delete', user_1.auth, index_1.userController.dele
  *              required: true
  *      responses:
  *          200:
- *              description: Deletion sucess
+ *              description: Account deactivate success
  *          400:
  *              description: Bad request
  *          401:
  *              description: Unauthorized
- *          404:
- *              description: Not found
  *          500:
  *              description: Internal server error
  */
@@ -276,15 +235,38 @@ router.patch('/user/:username/deactivate', user_1.auth, index_1.userController.d
  *              required: true
  *      responses:
  *          200:
+ *              description: Account activation success
+ *          400:
+ *              description: Bad request
+ *          401:
+ *              description: Unauthorized
+ *          500:
+ *              description: Internal server error
+ */
+router.patch('/user/:username/reactivate', user_1.auth, index_1.userController.reactivateUser);
+/**
+ * @swagger
+ * /v1/user/{username}/delete:
+ *  delete:
+ *      tags: [User]
+ *      summary: delete user
+ *      description: delete the existing data of user of given username
+ *      parameters:
+ *          - in: path
+ *            name: username
+ *            required: true
+ *            description: String username required
+ *            schema:
+ *              type: string
+ *      responses:
+ *          200:
  *              description: Deletion sucess
  *          400:
  *              description: Bad request
  *          401:
  *              description: Unauthorized
- *          404:
- *              description: Not found
  *          500:
  *              description: Internal server error
  */
-router.patch('/user/:username/reactivate', user_1.auth, index_1.userController.reactivateUser);
+router.delete('/user/:username/delete', user_1.auth, index_1.userController.deleteUser);
 exports.default = router;

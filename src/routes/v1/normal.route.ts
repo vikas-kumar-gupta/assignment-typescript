@@ -23,12 +23,6 @@ const router = express.Router();
  *      responses:
  *          200:
  *              description: Sucess
- *          400:
- *              description: Bad request
- *          401:
- *              description: Unauthorized
- *          404:
- *              description: Not found
  *          500:
  *              description: Internal server error
  */
@@ -42,13 +36,7 @@ router.get('/', normalController.landingPage)
  *      summary: page not found
  *      description: all the undefined paths will be routed here to show PAGE_NOT_FOUND
  *      responses:
- *          200:
- *              description: Sucess
  *          400:
- *              description: Bad request
- *          401:
- *              description: Unauthorized
- *          404:
  *              description: Not found
  *          500:
  *              description: Internal server error

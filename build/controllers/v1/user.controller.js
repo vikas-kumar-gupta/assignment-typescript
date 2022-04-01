@@ -23,14 +23,13 @@ const users_model_1 = __importDefault(require("../../models/users.model"));
 /**
  * @description this method will recieve the username, password and email from the body
  */
-const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const signUp = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { username, password, email, status } = req.body;
         const userExists = yield users_model_1.default.findOne({ $or: [{ email: email }, { username: username }] });
         if (!userExists) {
             const hashPassword = (0, md5_1.default)(password);
-            const createdAt = new Date().getTime();
-            const query = { username: username, password: hashPassword, email: email, status: status, createdAt: createdAt };
+            const query = { username: username, password: hashPassword, email: email, status: status, createdAt: new Date().getTime() };
             const user = new users_model_1.default(query);
             const token = jsonwebtoken_1.default.sign({ _id: user._id }, "satyamev-jayte");
             res.cookie('jwt', token, { expires: new Date(Date.now() + 600000) });
@@ -44,10 +43,11 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             });
         }
         else {
-            res.status(400).json({ message: "email or username is already registered" });
+            res.status(400).json(constant_1.STATUS_MSG.ERROR.DEFAULT_ERROR_MESSAGE('email or username is already registered'));
         }
     }
     catch (err) {
+        // next(err)
         res.status(constant_1.STATUS_MSG.ERROR.BAD_REQUEST.statusCode).json(constant_1.STATUS_MSG.ERROR.BAD_REQUEST);
     }
 });
@@ -81,6 +81,7 @@ const logIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
     }
     catch (err) {
+        // next(err)
         res.status(400).json(constant_1.STATUS_MSG.ERROR.BAD_REQUEST);
     }
 });
@@ -111,11 +112,12 @@ const getAllUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     try {
         const user = yield users_model_1.default.find();
         if (!user) {
-            res.status(404).json(constant_1.STATUS_MSG.ERROR.BAD_REQUEST);
+            res.status(constant_1.STATUS_MSG.SUCCESS.EMPTY_RECORD.statusCode).json(constant_1.STATUS_MSG.SUCCESS.EMPTY_RECORD);
         }
         res.status(200).json(user);
     }
     catch (err) {
+        // next(err);
         res.status(400).json(constant_1.STATUS_MSG.ERROR.BAD_REQUEST);
     }
 });
@@ -125,7 +127,7 @@ const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const username = req.params.username;
         const user = users_model_1.default.findOneAndDelete({ username: username }, (err, data) => {
             if (err) {
-                res.status(404).json({ error: true, message: err });
+                throw err;
             }
             else {
                 if (data) {
@@ -180,7 +182,7 @@ const deactivateUser = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
                 }
             }
             else {
-                res.status(constant_1.STATUS_MSG.ERROR.DEFAULT_ERROR_MESSAGE('').statusCode).json(constant_1.STATUS_MSG.ERROR.DEFAULT_ERROR_MESSAGE('User status is already DEACTIVE'));
+                res.status(constant_1.STATUS_MSG.ERROR.DEFAULT_ERROR_MESSAGE('').statusCode).json(constant_1.STATUS_MSG.ERROR.DEFAULT_ERROR_MESSAGE('User status is already INACTIVE'));
             }
         }
     }
