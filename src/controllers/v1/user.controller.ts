@@ -14,7 +14,6 @@ import * as validate from '../../utils/validator'
 /**
  * @description this method will recieve the username, password and email from the body
  */
-
 export const signUp = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { username, password, email } = req.body;
@@ -63,7 +62,10 @@ export const logIn = async (req: Request, res: Response, next: NextFunction) => 
         const user: any = await User.findOne({ username: username, password: hashPassword })
         const token = req.cookies.jwt;
         if (token == undefined && user) {
-            const newToken = jwt.sign({ _id: user._id }, "satyamev-jayte")
+            // res.clearCookie('jwt');
+            const newToken = jwt.sign({ _id: user._id }, "satyamev-jayte");
+            console.log(newToken);
+            
             res.cookie('jwt', newToken, { expires: new Date(Date.now() + 600000) })
             if (user) {
                 res.status(200).json(STATUS_MSG.SUCCESS.DEFAULT)
@@ -107,7 +109,6 @@ export const userDetail = async (req: Request, res: Response, next: NextFunction
         res.status(400).json(STATUS_MSG.ERROR.BAD_REQUEST);
     }
 }
-
 
 /**
  * @description displays all the user 
