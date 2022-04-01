@@ -7,7 +7,8 @@ import md5 from 'md5';
 const app: Application = express();
 
 import User from '../../models/users.model'
-import {handleError} from '../../middlewares/error.middleware'
+import { IUser } from '../../interfaces/model.interface'
+import { handleError } from '../../middlewares/error.middleware'
 import * as validate from '../../utils/validator'
 
 /**
@@ -16,21 +17,21 @@ import * as validate from '../../utils/validator'
 
 export const signUp = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { username, password, email }: any = req.body;
+        const { username, password, email } = req.body;
 
         // validating the user inputs
-        await validate.userSignup.validateAsync(req.body);
+        await validate.userSignup.validateAsync(req.body);   
 
         // check wheather user or email addresss already registred
         const isUserExists = await User.findOne({ $or: [{ email: email }, { username: username }] });
         if (!isUserExists) {
             const hashPassword = md5(password);
-            const query = { username: username, password: hashPassword, email: email, status: status, createdAt: new Date().getTime() }
+            const query = { username: username, password: hashPassword, email: email, createdAt: new Date().getTime() }
             const user = new User(query);
             const token: any = jwt.sign({ _id: user._id }, "satyamev-jayte")
             res.cookie('jwt', token, { expires: new Date(Date.now() + 600000) })
             user.save(err => {
-                if (err) {
+                if (err) {                    
                     throw new Error(STATUS_MSG.ERROR.BAD_REQUEST.message)
                 }
                 else {
@@ -128,7 +129,7 @@ export const getAllUsers = async (req: Request, res: Response, next: NextFunctio
 export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const username = req.params.username;
-        const user = User.findOneAndDelete({ username: username }, (err: Error, data: User) => {
+        const user = User.findOneAndDelete({ username: username }, (err: Error, data: IUser) => {
             if (err) {
                 throw err;
             }
@@ -163,7 +164,7 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
             }
         });
     }
-    catch (err : any) {
+    catch (err: any) {
         if (err.isJoi) {
             err.status = 422
         }

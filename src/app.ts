@@ -21,6 +21,7 @@ const port = CONFIG.PORT
  * 3. implement constant messages               Done
  * 4. validation (DB, requests)                 Done
  * 5. swagger responses                         Done
+ * 6. implement interface                       Done
  * 
  * @fix
  * 1. .env path                                 Done

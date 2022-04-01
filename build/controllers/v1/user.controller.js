@@ -56,7 +56,7 @@ const signUp = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
         const isUserExists = yield users_model_1.default.findOne({ $or: [{ email: email }, { username: username }] });
         if (!isUserExists) {
             const hashPassword = (0, md5_1.default)(password);
-            const query = { username: username, password: hashPassword, email: email, status: status, createdAt: new Date().getTime() };
+            const query = { username: username, password: hashPassword, email: email, createdAt: new Date().getTime() };
             const user = new users_model_1.default(query);
             const token = jsonwebtoken_1.default.sign({ _id: user._id }, "satyamev-jayte");
             res.cookie('jwt', token, { expires: new Date(Date.now() + 600000) });

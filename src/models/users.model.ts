@@ -1,17 +1,9 @@
 import { DBENUMS } from '../constant'
 import mongoose, { Schema, model } from 'mongoose';
 
-//  creating user interface
-interface User {
-    username: String,
-    password: String,
-    email: String,
-    status: String,
-    createdAt: Date,
-    updatedAt: Date,
-}
+import {IUser} from '../interfaces/model.interface'
 
-const userSchema = new Schema<User>({
+const userSchema = new Schema<IUser>({
     username: {
         type: String,
         required: true
@@ -38,6 +30,6 @@ const userSchema = new Schema<User>({
     }
 })
 
-const User = model<User>('User', userSchema);
+const User = model<IUser>('User', userSchema);
 
 export default User;
