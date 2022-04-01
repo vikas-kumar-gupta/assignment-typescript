@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendMsg = exports.updateUser = exports.deleteUser = exports.getAllUsers = exports.userDetail = exports.logIn = exports.signUp = void 0;
+exports.sendMsg = exports.reactivateUser = exports.deactivateUser = exports.updateUser = exports.deleteUser = exports.getAllUsers = exports.userDetail = exports.logIn = exports.signUp = void 0;
 const constant_1 = require("../../constant");
 const express_1 = __importDefault(require("express"));
 const mqtt_1 = __importDefault(require("mqtt"));
@@ -26,9 +26,9 @@ const users_model_1 = __importDefault(require("../../models/users.model"));
 const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { username, password, email, status } = req.body;
-        const hashPassword = (0, md5_1.default)(password);
         const userExists = yield users_model_1.default.findOne({ $or: [{ email: email }, { username: username }] });
         if (!userExists) {
+            const hashPassword = (0, md5_1.default)(password);
             const createdAt = new Date().getTime();
             const query = { username: username, password: hashPassword, email: email, status: status, createdAt: createdAt };
             const user = new users_model_1.default(query);
@@ -36,11 +36,9 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             res.cookie('jwt', token, { expires: new Date(Date.now() + 600000) });
             user.save(err => {
                 if (err) {
-                    // res.status(404).json({ error: true, message: err.message });
                     throw new Error(constant_1.STATUS_MSG.ERROR.BAD_REQUEST.message);
                 }
                 else {
-                    // res.status(201).json({ message: "data updated successfully" })
                     res.status(201).json(constant_1.STATUS_MSG.SUCCESS.CREATED);
                 }
             });
@@ -50,7 +48,7 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
     }
     catch (err) {
-        res.status(400).json(constant_1.STATUS_MSG.ERROR.BAD_REQUEST);
+        res.status(constant_1.STATUS_MSG.ERROR.BAD_REQUEST.statusCode).json(constant_1.STATUS_MSG.ERROR.BAD_REQUEST);
     }
 });
 exports.signUp = signUp;
@@ -67,11 +65,9 @@ const logIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             const newToken = jsonwebtoken_1.default.sign({ _id: user._id }, "satyamev-jayte");
             res.cookie('jwt', newToken, { expires: new Date(Date.now() + 600000) });
             if (user) {
-                // res.status(200).json({ message: "login successful", user: user })
                 res.status(200).json(constant_1.STATUS_MSG.SUCCESS.DEFAULT);
             }
             else {
-                // res.status(401).json({ message: "incorrect username or password" })
                 res.status(400).json(constant_1.STATUS_MSG.ERROR.INCORRECT_CREDENTIALS);
             }
         }
@@ -133,11 +129,9 @@ const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             }
             else {
                 if (data) {
-                    // res.status(200).json({ message: "user deleted successfully", user: data })
                     res.status(200).json(constant_1.STATUS_MSG.SUCCESS.DELETED);
                 }
                 else {
-                    // res.status(401).json({ message: "user does not exist" })
                     res.status(400).json(constant_1.STATUS_MSG.ERROR.NOT_EXIST(username));
                 }
             }
@@ -168,6 +162,58 @@ const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.updateUser = updateUser;
+const deactivateUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const username = req.params.username;
+        let user = yield users_model_1.default.findOne({ username: username });
+        if (!user) {
+            throw new Error(constant_1.STATUS_MSG.ERROR.NOT_EXIST(username).message);
+        }
+        else {
+            if (user.status === constant_1.DBENUMS.STATUS[0]) {
+                user = yield users_model_1.default.findOneAndUpdate({ username: username }, { status: constant_1.DBENUMS.STATUS[1], updatedAt: new Date().getTime() }, { new: true });
+                if (!user) {
+                    throw new Error(constant_1.STATUS_MSG.ERROR.NOT_EXIST(username).message);
+                }
+                else {
+                    res.status(constant_1.STATUS_MSG.SUCCESS.UPDATED.statusCode).json(constant_1.STATUS_MSG.SUCCESS.UPDATED);
+                }
+            }
+            else {
+                res.status(constant_1.STATUS_MSG.ERROR.DEFAULT_ERROR_MESSAGE('').statusCode).json(constant_1.STATUS_MSG.ERROR.DEFAULT_ERROR_MESSAGE('User status is already DEACTIVE'));
+            }
+        }
+    }
+    catch (err) {
+        next(err);
+    }
+});
+exports.deactivateUser = deactivateUser;
+const reactivateUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const username = req.params.username;
+        let user = yield users_model_1.default.findOne({ username: username });
+        if (!user) {
+            throw new Error(constant_1.STATUS_MSG.ERROR.NOT_EXIST(username).message);
+        }
+        else {
+            if (user.status === constant_1.DBENUMS.STATUS[1]) {
+                user = yield users_model_1.default.findOneAndUpdate({ username: username }, { status: constant_1.DBENUMS.STATUS[0], updatedAt: new Date().getTime() }, { new: true });
+                if (!user)
+                    throw new Error(constant_1.STATUS_MSG.ERROR.NOT_EXIST(username).message);
+                else
+                    res.status(constant_1.STATUS_MSG.SUCCESS.UPDATED.statusCode).json(constant_1.STATUS_MSG.SUCCESS.UPDATED);
+            }
+            else {
+                res.status(constant_1.STATUS_MSG.ERROR.DEFAULT_ERROR_MESSAGE('').statusCode).json(constant_1.STATUS_MSG.ERROR.DEFAULT_ERROR_MESSAGE('User status is already ACTIVE'));
+            }
+        }
+    }
+    catch (err) {
+        next(err);
+    }
+});
+exports.reactivateUser = reactivateUser;
 const sendMsg = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const token = req.cookies.jwt;

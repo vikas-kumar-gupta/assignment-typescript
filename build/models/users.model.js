@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const constant_1 = require("../constant");
 const mongoose_1 = require("mongoose");
 const userSchema = new mongoose_1.Schema({
     username: {
@@ -16,8 +17,8 @@ const userSchema = new mongoose_1.Schema({
     },
     status: {
         type: String,
-        enum: ['active', 'deactivated', 'incomplete'],
-        default: 'active',
+        enum: constant_1.DBENUMS.STATUS,
+        default: constant_1.DBENUMS.STATUS[0],
     },
     createdAt: {
         type: Date,

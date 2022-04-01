@@ -7,6 +7,12 @@ export const ENVIRONMENT = {
     DEFAULT: `default`
 }
 
+export const DBENUMS = {
+    SIGNUPSOURCE: ['NORMAL', 'APPLE', 'GOOGLE', 'FACEBOOK'],
+    USER_GENDER: ['MALE', "FEMALE"],
+    STATUS: ['ACTIVE', 'INACTIVE', 'DELETED']
+}
+
 export let STATUS_MSG = {
     ERROR: {
         BAD_REQUEST: {
@@ -59,7 +65,7 @@ export let STATUS_MSG = {
             type: 'PAGE_NOT_FOUND',
             message: 'Page not found!'
         },
-    
+
         TOKEN_ALREADY_EXPIRED: {
             statusCode: 408,
             success: false,
@@ -84,8 +90,8 @@ export let STATUS_MSG = {
             message: 'Invalid token provided',
             type: 'INVALID_TOKEN'
         },
-     
-       
+
+
         UNAUTHORIZED: {
             statusCode: 401,
             success: false,

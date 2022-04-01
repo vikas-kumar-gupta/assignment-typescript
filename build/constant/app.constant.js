@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.STATUS_MSG = exports.ENVIRONMENT = void 0;
+exports.STATUS_MSG = exports.DBENUMS = exports.ENVIRONMENT = void 0;
 exports.ENVIRONMENT = {
     PRODUCTION: `production`,
     DEVELOPMENT: `development`,
@@ -8,6 +8,11 @@ exports.ENVIRONMENT = {
     QA: `qa`,
     TESTING: `testing`,
     DEFAULT: `default`
+};
+exports.DBENUMS = {
+    SIGNUPSOURCE: ['NORMAL', 'APPLE', 'GOOGLE', 'FACEBOOK'],
+    USER_GENDER: ['MALE', "FEMALE"],
+    STATUS: ['ACTIVE', 'INACTIVE', 'DELETED']
 };
 exports.STATUS_MSG = {
     ERROR: {

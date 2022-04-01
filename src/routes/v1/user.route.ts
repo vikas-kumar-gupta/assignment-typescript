@@ -242,4 +242,62 @@ router.patch('/user/:username/edit', auth, userController.updateUser)
  */
 router.delete('/user/:username/delete', auth, userController.deleteUser)
 
+/**
+ * @swagger
+ * /v1/user/{username}/deactivate:
+ *  patch:
+ *      tags: [User]
+ *      summary: deactivate user
+ *      description: deactivate the account of user of given username
+ *      parameters:
+ *          - in: path
+ *            name: username
+ *            required: true
+ *            description: String username required
+ *            schema:
+ *              type: string
+ *              required: true
+ *      responses:
+ *          200:
+ *              description: Deletion sucess
+ *          400:
+ *              description: Bad request
+ *          401:
+ *              description: Unauthorized
+ *          404:
+ *              description: Not found
+ *          500:
+ *              description: Internal server error
+ */
+router.patch('/user/:username/deactivate', auth, userController.deactivateUser)
+
+/**
+ * @swagger
+ * /v1/user/{username}/reactivate:
+ *  patch:
+ *      tags: [User]
+ *      summary: reactivate user
+ *      description: rreactivate the account of user of given username
+ *      parameters:
+ *          - in: path
+ *            name: username
+ *            required: true
+ *            description: String username required
+ *            schema:
+ *              type: string
+ *              required: true
+ *      responses:
+ *          200:
+ *              description: Deletion sucess
+ *          400:
+ *              description: Bad request
+ *          401:
+ *              description: Unauthorized
+ *          404:
+ *              description: Not found
+ *          500:
+ *              description: Internal server error
+ */
+router.patch('/user/:username/reactivate', auth, userController.reactivateUser)
+
 export default router;

@@ -1,3 +1,4 @@
+import { DBENUMS } from '../constant'
 import mongoose, { Schema, model } from 'mongoose';
 
 //  creating user interface
@@ -25,8 +26,8 @@ const userSchema = new Schema<User>({
     },
     status: {
         type: String,
-        enum: ['active', 'deactivated', 'incomplete'],
-        default: 'active',
+        enum: DBENUMS.STATUS,
+        default: DBENUMS.STATUS[0],
     },
     createdAt: {
         type: Date,
