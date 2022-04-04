@@ -130,18 +130,11 @@ router.get('/user/all-users', userController.getAllUsers)
 
 /**
  * @swagger
- * /v1/user/{username}:
+ * /v1/user/profile:
  *  get:
  *      tags: [User]
  *      summary: user details
  *      description: All the data about a perticular username
- *      parameters:
- *          - in: path
- *            name: username
- *            required: true
- *            description: string username required
- *            schema:
- *              type: string
  *      responses:
  *          200:
  *              description: Sucess
@@ -152,24 +145,17 @@ router.get('/user/all-users', userController.getAllUsers)
  *          500:
  *              description: Internal server error
  */
-router.get('/user/:username', auth, userController.userDetail)
+router.get('/user/profile', auth, userController.userDetail)
 
 router.post('/send-msg', userController.sendMsg)
 
 /**
  * @swagger
- * /v1/user/{username}/edit:
+ * /v1/user/edit:
  *  patch:
  *      tags: [User]
  *      summary: edit user data
  *      description: edit the data of an user of given username
- *      parameters:
- *          - in: path
- *            name: username
- *            required: true
- *            description: String username required
- *            schema:
- *              type: string
  *      requestBody:
  *          required: true
  *          content:
@@ -177,18 +163,12 @@ router.post('/send-msg', userController.sendMsg)
  *                  schema:
  *                      type: object
  *                      properties:
- *                          username:
- *                              type: string
- *                              required: false
  *                          password:
  *                              type: string
  *                              required: false
  *                          email:
  *                              type: string
- *                              required: false
- *                          status:
- *                              type: string
- *                              required: false
+ *                              required: falsesss
  *      responses:
  *          200:
  *              description: Sucessfully edited
@@ -201,23 +181,15 @@ router.post('/send-msg', userController.sendMsg)
  *          500:
  *              description: Internal server error
  */
-router.patch('/user/:username/edit', auth, userController.updateUser)
+router.patch('/user/edit', auth, userController.updateUser)
 
 /**
  * @swagger
- * /v1/user/{username}/deactivate:
+ * /v1/user/deactivate:
  *  patch:
  *      tags: [User]
  *      summary: deactivate user
- *      description: deactivate the account of user of given username
- *      parameters:
- *          - in: path 
- *            name: username
- *            required: true
- *            description: String username required
- *            schema:
- *              type: string
- *              required: true
+ *      description: deactivate the account of logged in user
  *      responses:
  *          200:
  *              description: Account deactivate success
@@ -228,23 +200,15 @@ router.patch('/user/:username/edit', auth, userController.updateUser)
  *          500:
  *              description: Internal server error
  */
-router.patch('/user/:username/deactivate', auth, userController.deactivateUser)
+router.patch('/user/deactivate', auth, userController.deactivateUser)
 
 /**
  * @swagger
- * /v1/user/{username}/reactivate:
+ * /v1/user/reactivate:
  *  patch:
  *      tags: [User]
  *      summary: reactivate user
  *      description: rreactivate the account of user of given username
- *      parameters:
- *          - in: path
- *            name: username
- *            required: true
- *            description: String username required
- *            schema:
- *              type: string
- *              required: true
  *      responses:
  *          200:
  *              description: Account activation success
@@ -255,22 +219,15 @@ router.patch('/user/:username/deactivate', auth, userController.deactivateUser)
  *          500:
  *              description: Internal server error
  */
-router.patch('/user/:username/reactivate', auth, userController.reactivateUser)
+router.patch('/user/reactivate', auth, userController.reactivateUser)
 
 /**
  * @swagger
- * /v1/user/{username}/delete:
+ * /v1/user/delete:
  *  delete:
  *      tags: [User]
  *      summary: delete user
  *      description: delete the existing data of user of given username
- *      parameters:
- *          - in: path
- *            name: username
- *            required: true
- *            description: String username required
- *            schema:
- *              type: string
  *      responses:
  *          200:
  *              description: Deletion sucess
@@ -281,5 +238,5 @@ router.patch('/user/:username/reactivate', auth, userController.reactivateUser)
  *          500:
  *              description: Internal server error
  */
-router.delete('/user/:username/delete', auth, userController.deleteUser)
+router.delete('/user/delete', auth, userController.deleteUser)
 export default router;

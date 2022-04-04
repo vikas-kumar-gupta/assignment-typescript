@@ -5,7 +5,9 @@ const isLoggedIn = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const token = req.cookies.jwt;
         if (token != undefined) {
-            const varifyToken = jwt.verify(token, "satyamev-jayte")
+            const varifyToken = jwt.verify(token, "satyamev-jayte", (err: any, data: any) => {
+                req.body.tokenId = data._id;
+            })
             next()
         }
         else {
@@ -14,7 +16,7 @@ const isLoggedIn = async (req: Request, res: Response, next: NextFunction) => {
     }
     catch (err) {
         console.log(err);
-        
+
         res.status(404).json({ error: true, message: "err" });
     }
 }
@@ -22,7 +24,9 @@ const isLoggedIn = async (req: Request, res: Response, next: NextFunction) => {
 const auth = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const token = req.cookies.jwt;
-        const verifyToken = jwt.verify(token, "satyamev-jayte")
+        const verifyToken = jwt.verify(token, "satyamev-jayte", (err: any, data: any) => {
+            req.body.tokenId = data._id;
+        })
         next()
     }
     catch (err) {

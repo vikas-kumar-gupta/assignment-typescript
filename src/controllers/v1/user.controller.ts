@@ -19,7 +19,7 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
         const { username, password, email } = req.body;
 
         // validating the user inputs
-        await validate.userSignup.validateAsync(req.body);   
+        await validate.userSignup.validateAsync(req.body);
 
         // check wheather user or email addresss already registred
         const isUserExists = await User.findOne({ $or: [{ email: email }, { username: username }] });
@@ -30,7 +30,7 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
             const token: any = jwt.sign({ _id: user._id }, "satyamev-jayte")
             res.cookie('jwt', token, { expires: new Date(Date.now() + 600000) })
             user.save(err => {
-                if (err) {                    
+                if (err) {
                     throw new Error(STATUS_MSG.ERROR.BAD_REQUEST.message)
                 }
                 else {
@@ -61,11 +61,14 @@ export const logIn = async (req: Request, res: Response, next: NextFunction) => 
         const hashPassword = md5(password)
         const user: any = await User.findOne({ username: username, password: hashPassword })
         const token = req.cookies.jwt;
-        if (token == undefined && user) {
-            // res.clearCookie('jwt');
+        let userId;
+        if (!user) {
+            userId = null;
+        } else {
+            userId = user._id;
+        }
+        if (userId != req.body._id && user) {
             const newToken = jwt.sign({ _id: user._id }, "satyamev-jayte");
-            console.log(newToken);
-            
             res.cookie('jwt', newToken, { expires: new Date(Date.now() + 600000) })
             if (user) {
                 res.status(200).json(STATUS_MSG.SUCCESS.DEFAULT)
@@ -97,12 +100,11 @@ export const logIn = async (req: Request, res: Response, next: NextFunction) => 
  */
 export const userDetail = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const username = req.params.username;
-        const user = await User.findOne({ username: username })
+        const user = await User.findById(req.body.tokenId);
         if (user) {
             res.status(200).json(user)
         } else {
-            res.status(400).json(STATUS_MSG.ERROR.NOT_EXIST(username))
+            res.status(400).json(STATUS_MSG.ERROR.NOT_EXIST(req.body.tokenId + ' please log in with correct credencials'));
         }
     }
     catch (err) {
@@ -117,46 +119,44 @@ export const getAllUsers = async (req: Request, res: Response, next: NextFunctio
     try {
         const user = await User.find();
         if (!user) {
-            res.status(STATUS_MSG.SUCCESS.EMPTY_RECORD.statusCode).json(STATUS_MSG.SUCCESS.EMPTY_RECORD)
+            return res.status(STATUS_MSG.SUCCESS.EMPTY_RECORD.statusCode).json(STATUS_MSG.SUCCESS.EMPTY_RECORD)
         }
-        res.status(200).json(user);
+        return res.status(200).json(user);
     }
     catch (err) {
-        // next(err);
         res.status(400).json(STATUS_MSG.ERROR.BAD_REQUEST);
     }
 }
 
 export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const username = req.params.username;
-        const user = User.findOneAndDelete({ username: username }, (err: Error, data: IUser) => {
+        const user = await User.findByIdAndDelete(req.body.tokenId, (err: any, data: any) => {
             if (err) {
-                throw err;
+                throw new Error(err.message);
             }
             else {
                 if (data) {
                     res.status(200).json(STATUS_MSG.SUCCESS.DELETED)
                 }
                 else {
-                    res.status(400).json(STATUS_MSG.ERROR.NOT_EXIST(username))
+                    res.status(400).json(STATUS_MSG.ERROR.NOT_EXIST(req.body.tokenId))
                 }
             }
         })
     }
     catch (err) {
-        res.status(400).json(STATUS_MSG.ERROR.BAD_REQUEST)
+        next(err)
+        // res.status(400).json(STATUS_MSG.ERROR.BAD_REQUEST)
     }
 }
 
 export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const username: String = req.params.username;
         const { password, email, status } = req.body;
         await validate.userUpdate.validateAsync(req.body)
         const hashPassword = md5(password)
         const updatedAt: Number = new Date().getTime();
-        User.findOneAndUpdate({ username: username }, { password: hashPassword, email: email, status: status, updatedAt: updatedAt }, null, (err, data) => {
+        User.findByIdAndUpdate(req.body.tokenId , { password: hashPassword, email: email, status: status, updatedAt: updatedAt }, null, (err, data) => {
             if (err) {
                 res.status(400).json(STATUS_MSG.ERROR.BAD_REQUEST)
             }
@@ -175,15 +175,14 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
 
 export const deactivateUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const username: string = req.params.username;
-        let user = await User.findOne({ username: username });
+        let user = await User.findById(req.body.tokenId)
         if (!user) {
-            throw new Error(STATUS_MSG.ERROR.NOT_EXIST(username).message)
+            throw new Error(STATUS_MSG.ERROR.NOT_EXIST(req.body.tokenId).message)
         } else {
             if (user.status === DBENUMS.STATUS[0]) {
-                user = await User.findOneAndUpdate({ username: username }, { status: DBENUMS.STATUS[1], updatedAt: new Date().getTime() }, { new: true })
+                user = await User.findByIdAndUpdate(req.body.tokenId, { status: DBENUMS.STATUS[1], updatedAt: new Date().getTime() }, { new: true })
                 if (!user) {
-                    throw new Error(STATUS_MSG.ERROR.NOT_EXIST(username).message)
+                    throw new Error(STATUS_MSG.ERROR.NOT_EXIST(req.body.tokenId).message)
                 }
                 else {
                     res.status(STATUS_MSG.SUCCESS.UPDATED.statusCode).json(STATUS_MSG.SUCCESS.UPDATED)
@@ -201,15 +200,14 @@ export const deactivateUser = async (req: Request, res: Response, next: NextFunc
 
 export const reactivateUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const username = req.params.username;
-        let user = await User.findOne({ username: username })
+        let user = await User.findById(req.body.tokenId)
         if (!user) {
-            throw new Error(STATUS_MSG.ERROR.NOT_EXIST(username).message)
+            throw new Error(STATUS_MSG.ERROR.NOT_EXIST(req.body.tokenId).message)
         } else {
             if (user.status === DBENUMS.STATUS[1]) {
-                user = await User.findOneAndUpdate({ username: username }, { status: DBENUMS.STATUS[0], updatedAt: new Date().getTime() }, { new: true })
+                user = await User.findByIdAndUpdate(req.body.tokenId, { status: DBENUMS.STATUS[0], updatedAt: new Date().getTime() }, { new: true })
                 if (!user)
-                    throw new Error(STATUS_MSG.ERROR.NOT_EXIST(username).message)
+                    throw new Error(STATUS_MSG.ERROR.NOT_EXIST(req.body.tokenId).message)
                 else
                     res.status(STATUS_MSG.SUCCESS.UPDATED.statusCode).json(STATUS_MSG.SUCCESS.UPDATED)
             } else {

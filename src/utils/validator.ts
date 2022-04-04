@@ -10,7 +10,8 @@ export const userSignup = Joi.object({
 
 export const userLogIn = Joi.object({
     username: Joi.string().trim().min(3).lowercase().required(),
-    password: Joi.string().min(5).max(20).required()
+    password: Joi.string().min(5).max(20).required(),
+    tokenId: Joi.string().trim()
 })
 
 export const username = Joi.object({
@@ -20,5 +21,5 @@ export const username = Joi.object({
 export const userUpdate = Joi.object({
     password: Joi.string().min(5).max(20),
     email: Joi.string().trim().email().required(),
-    status: Joi.string().trim().uppercase()
+    tokenId: Joi.string().trim()
 })
