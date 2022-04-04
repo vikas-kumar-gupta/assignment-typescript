@@ -14,8 +14,6 @@ const router = express.Router();
  *  description: User Routes
  */
 
-
-
 // CREATING SCHEMA
 
 /**

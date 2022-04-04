@@ -34,12 +34,12 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
                     throw new Error(STATUS_MSG.ERROR.BAD_REQUEST.message)
                 }
                 else {
-                    res.status(201).json(STATUS_MSG.SUCCESS.CREATED)
+                    return res.status(201).json(STATUS_MSG.SUCCESS.CREATED)
                 }
             })
         }
         else {
-            res.status(400).json(STATUS_MSG.ERROR.DEFAULT_ERROR_MESSAGE('email or username is already registered'));
+            return res.status(400).json(STATUS_MSG.ERROR.DEFAULT_ERROR_MESSAGE('email or username is already registered'));
         }
     }
     catch (err: any) {
@@ -47,7 +47,7 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
             err.status = 422
         }
         // next(err)
-        res.status(STATUS_MSG.ERROR.BAD_REQUEST.statusCode).json(STATUS_MSG.ERROR.BAD_REQUEST);
+        return res.status(STATUS_MSG.ERROR.BAD_REQUEST.statusCode).json(STATUS_MSG.ERROR.BAD_REQUEST);
     }
 }
 
@@ -71,18 +71,18 @@ export const logIn = async (req: Request, res: Response, next: NextFunction) => 
             const newToken = jwt.sign({ _id: user._id }, "satyamev-jayte");
             res.cookie('jwt', newToken, { expires: new Date(Date.now() + 600000) })
             if (user) {
-                res.status(200).json(STATUS_MSG.SUCCESS.DEFAULT)
+                return res.status(200).json(STATUS_MSG.SUCCESS.DEFAULT)
             }
             else {
-                res.status(400).json(STATUS_MSG.ERROR.INCORRECT_CREDENTIALS)
+                return res.status(400).json(STATUS_MSG.ERROR.INCORRECT_CREDENTIALS)
             }
         }
         else {
             if (user) {
-                res.status(200).json(STATUS_MSG.ERROR.TOKEN_ALREADY_EXIST);
+                return res.status(200).json(STATUS_MSG.ERROR.TOKEN_ALREADY_EXIST);
             }
             else {
-                res.status(400).json(STATUS_MSG.ERROR.INCORRECT_CREDENTIALS)
+                return res.status(400).json(STATUS_MSG.ERROR.INCORRECT_CREDENTIALS)
             }
         }
 
@@ -102,13 +102,13 @@ export const userDetail = async (req: Request, res: Response, next: NextFunction
     try {
         const user = await User.findById(req.body.tokenId);
         if (user) {
-            res.status(200).json(user)
+            return res.status(200).json(user)
         } else {
-            res.status(400).json(STATUS_MSG.ERROR.NOT_EXIST(req.body.tokenId + ' please log in with correct credencials'));
+            return res.status(400).json(STATUS_MSG.ERROR.NOT_EXIST(req.body.tokenId + ' please log in with correct credencials'));
         }
     }
     catch (err) {
-        res.status(400).json(STATUS_MSG.ERROR.BAD_REQUEST);
+        return res.status(400).json(STATUS_MSG.ERROR.BAD_REQUEST);
     }
 }
 
@@ -124,7 +124,7 @@ export const getAllUsers = async (req: Request, res: Response, next: NextFunctio
         return res.status(200).json(user);
     }
     catch (err) {
-        res.status(400).json(STATUS_MSG.ERROR.BAD_REQUEST);
+        return res.status(400).json(STATUS_MSG.ERROR.BAD_REQUEST);
     }
 }
 
@@ -136,10 +136,10 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
             }
             else {
                 if (data) {
-                    res.status(200).json(STATUS_MSG.SUCCESS.DELETED)
+                    return res.status(200).json(STATUS_MSG.SUCCESS.DELETED)
                 }
                 else {
-                    res.status(400).json(STATUS_MSG.ERROR.NOT_EXIST(req.body.tokenId))
+                    return res.status(400).json(STATUS_MSG.ERROR.NOT_EXIST(req.body.tokenId))
                 }
             }
         })
@@ -156,12 +156,12 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
         await validate.userUpdate.validateAsync(req.body)
         const hashPassword = md5(password)
         const updatedAt: Number = new Date().getTime();
-        User.findByIdAndUpdate(req.body.tokenId , { password: hashPassword, email: email, status: status, updatedAt: updatedAt }, null, (err, data) => {
+        User.findByIdAndUpdate(req.body.tokenId, { password: hashPassword, email: email, status: status, updatedAt: updatedAt }, null, (err, data) => {
             if (err) {
-                res.status(400).json(STATUS_MSG.ERROR.BAD_REQUEST)
+                return res.status(400).json(STATUS_MSG.ERROR.BAD_REQUEST)
             }
             else {
-                res.status(200).json(STATUS_MSG.SUCCESS.UPDATED)
+                return res.status(200).json(STATUS_MSG.SUCCESS.UPDATED)
             }
         });
     }
@@ -169,7 +169,7 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
         if (err.isJoi) {
             err.status = 422
         }
-        res.status(400).json(STATUS_MSG.ERROR.BAD_REQUEST)
+        return res.status(400).json(STATUS_MSG.ERROR.BAD_REQUEST)
     }
 }
 
@@ -185,11 +185,11 @@ export const deactivateUser = async (req: Request, res: Response, next: NextFunc
                     throw new Error(STATUS_MSG.ERROR.NOT_EXIST(req.body.tokenId).message)
                 }
                 else {
-                    res.status(STATUS_MSG.SUCCESS.UPDATED.statusCode).json(STATUS_MSG.SUCCESS.UPDATED)
+                    return res.status(STATUS_MSG.SUCCESS.UPDATED.statusCode).json(STATUS_MSG.SUCCESS.UPDATED)
                 }
             }
             else {
-                res.status(STATUS_MSG.ERROR.DEFAULT_ERROR_MESSAGE('').statusCode).json(STATUS_MSG.ERROR.DEFAULT_ERROR_MESSAGE('User status is already INACTIVE'))
+                return res.status(STATUS_MSG.ERROR.DEFAULT_ERROR_MESSAGE('').statusCode).json(STATUS_MSG.ERROR.DEFAULT_ERROR_MESSAGE('User status is already INACTIVE'))
             }
         }
     }
@@ -209,9 +209,9 @@ export const reactivateUser = async (req: Request, res: Response, next: NextFunc
                 if (!user)
                     throw new Error(STATUS_MSG.ERROR.NOT_EXIST(req.body.tokenId).message)
                 else
-                    res.status(STATUS_MSG.SUCCESS.UPDATED.statusCode).json(STATUS_MSG.SUCCESS.UPDATED)
+                    return res.status(STATUS_MSG.SUCCESS.UPDATED.statusCode).json(STATUS_MSG.SUCCESS.UPDATED)
             } else {
-                res.status(STATUS_MSG.ERROR.DEFAULT_ERROR_MESSAGE('').statusCode).json(STATUS_MSG.ERROR.DEFAULT_ERROR_MESSAGE('User status is already ACTIVE'))
+                return res.status(STATUS_MSG.ERROR.DEFAULT_ERROR_MESSAGE('').statusCode).json(STATUS_MSG.ERROR.DEFAULT_ERROR_MESSAGE('User status is already ACTIVE'))
             }
         }
     }
@@ -235,14 +235,14 @@ export const sendMsg = async (req: Request, res: Response, next: NextFunction) =
             client.on('connect', () => {
                 client.publish(topic_Appinventiv, message);
                 console.log(`msg sent: ${message}`);
-                res.status(200).json({ message: 'message sent successfully' })
+                return res.status(200).json({ message: 'message sent successfully' })
             })
         }
         else {
-            res.status(401).json(STATUS_MSG.SUCCESS.DEFAULT)
+            return res.status(401).json(STATUS_MSG.SUCCESS.DEFAULT)
         }
     }
     catch (err) {
-        res.status(400).json(STATUS_MSG.ERROR.BAD_REQUEST)
+        return res.status(400).json(STATUS_MSG.ERROR.BAD_REQUEST)
     }
 }
