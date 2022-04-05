@@ -1,6 +1,6 @@
 export interface IUser {
     username: String,
-    password: String,
+    password: string,
     email: String,
     status: String,
     createdAt: Date,

@@ -22,8 +22,7 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
         // check wheather user or email addresss already registred
         const isUserExists = await User.findOne({ $or: [{ email: email }, { username: username }] });
         if (!isUserExists) {
-            const hashPassword = md5(password);
-            const query = { username: username, password: hashPassword, email: email, createdAt: new Date().getTime() }
+            const query = { username: username, password: password, email: email, createdAt: new Date().getTime() }
             const user = new User(query);
             const token: any = jwt.sign({ _id: user._id }, "satyamev-jayte")
             res.cookie('jwt', token, { expires: new Date(Date.now() + 600000) })

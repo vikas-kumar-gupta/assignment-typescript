@@ -1,4 +1,5 @@
 import { DBENUMS } from '../constant'
+import md5 from 'md5';
 import mongoose, { Schema, model } from 'mongoose';
 
 import {IUser} from '../interfaces/model.interface'
@@ -32,6 +33,19 @@ const userSchema = new Schema<IUser>({
     },
     updatedAt: {
         type: Date
+    }
+})
+
+// hashing password using pre hook
+userSchema.pre('save', function (next) {
+    try{
+        if(this.isModified('password') || this.isNew) {
+            this.password = md5(this.password)
+        }
+        next()
+    }
+    catch(err: any) {
+        next(err)
     }
 })
 
