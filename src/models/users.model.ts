@@ -3,6 +3,11 @@ import mongoose, { Schema, model } from 'mongoose';
 
 import {IUser} from '../interfaces/model.interface'
 
+/***
+ * TODO:
+ * 1. Implement hooks for hashing the password                  --Pending
+ */
+
 const userSchema = new Schema<IUser>({
     username: {
         type: String,

@@ -1,7 +1,5 @@
+import { CONFIG } from '../constant'
 import swaggerJSDoc from 'swagger-jsdoc';
-import swaggerUI from 'swagger-ui-express';
-import dotenv from 'dotenv';
-dotenv.config({path: '../../.env'});
 
 export const swaggerFunc = () => {
     const options = {
@@ -15,11 +13,21 @@ export const swaggerFunc = () => {
             // basePath: '/v1',
             servers: [
                 {
-                    url: `http://localhost:${process.env.PORT}`
+                    url: `http://localhost:${CONFIG.PORT}`
                 }
-            ]
+            ],
+            components: {
+                securitySchemes: {
+                    bearerAuth: {
+                        type: "http",
+                        name: "x-auth-token",
+                        scheme: "bearer",
+                        in: "header",
+                    },
+                },
+            },
         },
-        apis: ['../../src/routes/*/*.ts', `${process.cwd()}/src/routes/*/*.ts` ]
+        apis: ['../src/app.ts', '../src/routes/v1/*.ts']
     }
 
     const swaggerSpecs = swaggerJSDoc(options)

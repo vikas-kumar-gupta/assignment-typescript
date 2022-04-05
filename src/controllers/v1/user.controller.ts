@@ -7,8 +7,6 @@ import md5 from 'md5';
 const app: Application = express();
 
 import User from '../../models/users.model'
-import { IUser } from '../../interfaces/model.interface'
-import { handleError } from '../../middlewares/error.middleware'
 import * as validate from '../../utils/validator'
 
 /**
